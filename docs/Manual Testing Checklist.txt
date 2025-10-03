@@ -1,0 +1,51 @@
+# 1. Basic Functionality Tests
+✓ Program starts without errors
+✓ Menu displays correctly
+✓ All menu options work (1-7)
+✓ Invalid input is handled gracefully
+✓ Program exits cleanly
+
+# 2. Lesson Display Tests
+✓ All lessons show correct content
+✓ Key points are formatted properly
+✓ No truncation or display issues
+
+# 3. Checklist Tests
+✓ Yes/no validation works
+✓ Invalid input triggers retry with count
+✓ Max attempts prevents infinite loops
+✓ All 10 items can be completed
+✓ Mixed yes/no responses work
+
+# 4. Quiz Tests
+✓ All 3 scenarios display correctly
+✓ A/B/C validation works
+✓ Correct answers show ✅
+✓ Incorrect answers show ❌ with explanation
+✓ Score calculation is accurate
+✓ Performance feedback matches thresholds
+
+# 5. Report Generation Tests
+✓ Compliance percentage is correct
+✓ All checklist items show correct status
+✓ Timestamp is accurate
+✓ JSON file is created successfully
+✓ Recommendations match score ranges
+
+# 6. Progress History Tests
+✓ Shows "no progress" message when file missing
+✓ Displays saved progress correctly
+✓ Handles corrupted JSON gracefully
+✓ Handles permission errors
+
+# 7. Self-Test Tests
+✓ All 3 tests pass
+✓ Test results display correctly
+✓ Can skip self-test
+✓ Continues to main menu after test
+
+# 8. Error Handling Tests
+✓ Ctrl+C exits gracefully
+✓ File permission errors handled
+✓ Corrupted JSON handled
+✓ Missing file handled
