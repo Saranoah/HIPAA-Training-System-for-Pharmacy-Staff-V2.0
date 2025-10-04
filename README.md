@@ -30,8 +30,9 @@ A production-ready, interactive HIPAA compliance training and self-assessment sy
 
 ```bash
 # Clone the repository
-git clone https://github.com/Saranoah/HIPAA-Training-System-for-Pharmacy-Staff
-cd hipaa-training-system
+git clone https://github.com/Saranoah/HIPAA-Training-System-for-Pharmacy-Staff-V2.0.git
+cd HIPAA-Training-System-for-Pharmacy-Staff-V2.0
+
 
 # Run the program
 python hipaa_ai_pharmacy_production.py
