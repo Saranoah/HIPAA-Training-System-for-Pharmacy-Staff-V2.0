@@ -1,0 +1,2 @@
+# HIPAA Training System Dependencies
+# No external dependencies - pure Python!
