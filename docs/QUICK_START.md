@@ -259,7 +259,9 @@ touch hipaa_progress.json
 
 **Ready to start? Run**: `python hipaa_ai_pharmacy_production.py` 🚀
 
-**Last Updated**: October 2, 2025 START:     python hipaa_ai_*.py          │
+**Last Updated**: October 2, 2025 
+
+START:     python hipaa_ai_*.py          │
 │
   TEST:  python test_hipaa_*.py            │
 │ EXIT:      Choose option 7               │
