@@ -605,20 +605,26 @@ def complete_lesson():
         "new_xp": progress['xp']
     })
 
+def create_app():
+    """Factory function for creating a Flask app instance (used for testing and CI)."""
+    return app
+
+
 if __name__ == '__main__':
-    # Create templates folder if it doesn't exist
+    import os
     os.makedirs('templates', exist_ok=True)
     os.makedirs('static', exist_ok=True)
-    
-    print("="*60)
+
+    print("=" * 60)
     print("🎯 HIPAA Training System - Complete 95% Coverage")
-    print("="*60)
+    print("=" * 60)
     print(f"📚 Lessons: {len(LESSONS)}")
     print(f"🎯 Quiz Questions: {len(QUIZ_QUESTIONS)}")
     print(f"✅ Checklist Items: {len(CHECKLIST_ITEMS)}")
     print(f"⭐ Total Possible XP: {len(LESSONS)*15 + len(QUIZ_QUESTIONS)*10 + len(CHECKLIST_ITEMS)*5}")
-    print("="*60)
+    print("=" * 60)
     print("\n🚀 Starting server at http://localhost:5000")
     print("Press CTRL+C to stop\n")
-    
+
     app.run(debug=True, port=5000)
+
