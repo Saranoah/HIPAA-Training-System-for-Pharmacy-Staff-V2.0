@@ -8,13 +8,13 @@ Get up and running with the HIPAA Training System in 5 minutes.
 
 **Option A - Git Clone**:
 ```bash
-git clone https://github.com/yourusername/hipaa-training-system.git
+git clone https://github.com/saranoah/hipaa-training-system.git
 cd hipaa-training-system
 ```
 
 **Option B - Download ZIP**:
 ```bash
-# Download from https://github.com/yourusername/hipaa-training-system/archive/main.zip
+# Download from https://github.com/saranoah/hipaa-training-system/archive/main.zip
 unzip hipaa-training-system-main.zip
 cd hipaa-training-system-main
 ```
