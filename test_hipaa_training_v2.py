@@ -233,9 +233,9 @@ def run_all_tests():
     print(f"Errors: {len(result.errors)}")
     print(f"Success Rate: {((result.testsRun - len(result.failures) - len(result.errors)) / result.testsRun * 100):.1f}%")
     print("\nContent Verified:")
-    print(f"  ✓ 13 Complete Lessons")
-    print(f"  ✓ 15 Quiz Questions")
-    print(f"  ✓ 15 Checklist Items")
+    print(f"  [OK] 13 Complete Lessons")
+    print(f"  [OK] 15 Quiz Questions")
+    print(f"  [OK] 15 Checklist Items")
     print("="*70)
     
     return result.wasSuccessful()
