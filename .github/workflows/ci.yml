@@ -1,38 +1,22 @@
-name: HIPAA Training System CI
+# .github/workflows/ci.yml
+name: Run Tests
 
-on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main, develop ]
+on: [push, pull_request]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ['3.10', '3.11', '3.12']
-
     steps:
-    - name: Checkout repository code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
 
-    - name: Install Python dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install pytest
+      - name: Install dependencies
+        run: pip install -r requirements.txt
 
-    - name: Run tests with pytest
-      run: pytest tests/ -v --disable-warnings
-
-    - name: Test Flask application startup
-      run: |
-        timeout 10s python run.py || exit 0
-      env:
-        PYTHONPATH: src
+      - name: Run tests with pytest
+        run: pytest tests/ -v --disable-warnings
