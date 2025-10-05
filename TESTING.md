@@ -153,36 +153,37 @@ python hipaa_training_v2.py
 | **Exit** | Choose option 7 | Clean exit with message | ⬜ |
 | **System Info** | Choose option 6 | Shows thresholds and stats | ⬜ |
 
-### Test Suite 2: Lesson Display
+
+**In the "Manual Testing" section:**
+
+Update the test suites for your new content:
+
+```markdown
+### Test Suite 2: Lesson Display (13 Lessons)
 
 | Test | Steps | Expected Result | Status |
 |------|-------|----------------|--------|
-| **View Lessons** | Menu → 1 | All 3 lessons display | ⬜ |
-| **Content Check** | Read lessons | No truncation/errors | ⬜ |
-| **Key Points** | Check bullets | All points visible | ⬜ |
-| **Formatting** | Visual check | Clean, readable format | ⬜ |
+| **View All Lessons** | Menu → 1 | All 13 lessons display | ⬜ |
+| **Lesson Order** | Navigate through | Lessons in logical sequence | ⬜ |
+| **Content Depth** | Read any lesson | Comprehensive content with key points | ⬜ |
+| **PHI Identifiers** | Check lesson 6 | All 18 identifiers clearly explained | ⬜ |
 
-### Test Suite 3: Checklist Completion
-
-| Test | Steps | Expected Result | Status |
-|------|-------|----------------|--------|
-| **Start Checklist** | Menu → 2 | Shows first item | ⬜ |
-| **Valid Yes** | Type "yes" | Accepts, moves to next | ⬜ |
-| **Valid No** | Type "no" | Accepts, moves to next | ⬜ |
-| **Invalid Input** | Type "maybe" | Shows error, retry prompt | ⬜ |
-| **Max Attempts** | Invalid 3x | Auto-advances after 3 tries | ⬜ |
-| **Complete All** | Finish 10 items | Shows completion message | ⬜ |
-
-### Test Suite 4: Quiz Functionality
+### Test Suite 3: Checklist Completion (15 Items)
 
 | Test | Steps | Expected Result | Status |
 |------|-------|----------------|--------|
-| **Start Quiz** | Menu → 3 | Shows scenario 1 | ⬜ |
-| **Correct Answer** | Choose correct | Shows ✅ | ⬜ |
-| **Wrong Answer** | Choose incorrect | Shows ❌ + explanation | ⬜ |
-| **Invalid Input** | Type "D" | Error + retry | ⬜ |
-| **Score Display** | Complete quiz | Shows X/3 (XX%) | ⬜ |
-| **Feedback** | Check message | Matches score threshold | ⬜ |
+| **Complete All Items** | Menu → 3 → Answer all | All 15 items tracked | ⬜ |
+| **Category Breakdown** | Check categories | Training, Knowledge, Technical, Compliance | ⬜ |
+| **Mixed Responses** | Mix of yes/no | Score calculates correctly | ⬜ |
+
+### Test Suite 4: Quiz Functionality (15 Questions)
+
+| Test | Steps | Expected Result | Status |
+|------|-------|----------------|--------|
+| **Complete Quiz** | Menu → 2 | All 15 scenarios | ⬜ |
+| **Answer Options** | Check each question | A/B/C/D options clear | ⬜ |
+| **Explanations** | Wrong answers | Detailed explanations provided | ⬜ |
+| **Scoring** | Complete quiz | Score out of 15 with percentage | ⬜ |
 
 ### Test Suite 5: Report Generation
 
