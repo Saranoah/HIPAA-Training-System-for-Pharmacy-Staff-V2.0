@@ -346,7 +346,7 @@ applicable state laws.
 
 ## 👥 Authors
 
-- **Israa Ali** - *Initial work* -(https://github.com/Saranoah/HIPAA-Training-System-for-Pharmacy-Staff
+- **Israa Ali** - *Initial work* [](https://github.com/Saranoah/HIPAA-Training-System-for-Pharmacy-Staff-V2.0)
 
 ## 🙏 Acknowledgments
 
