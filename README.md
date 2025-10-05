@@ -10,7 +10,7 @@ A training system for pharmacy staff on HIPAA compliance
 A production-ready, interactive HIPAA compliance training and self-assessment system designed specifically for pharmacy staff.
 
 ## 🌟 Features
-
+ 
 - 📚 13 Comprehensive Lessons (From 3 → 13)
 
 ✅ What is PHI? - NEW! Defines all 18 identifiers
