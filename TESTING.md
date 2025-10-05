@@ -15,7 +15,7 @@ This document provides comprehensive testing procedures for the HIPAA Training S
 
 ### Run All Tests
 
-### Run All Tests
+
 
 ```bash
 # Quick test run
