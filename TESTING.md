@@ -31,8 +31,8 @@ python test_hipaa_training_v2.py -v
 ```
 TEST SUMMARY
 ======================================================================
-Tests Run: 26
-Successes: 26
+Tests Run: 21
+Successes: 21
 Failures: 0
 Errors: 0
 Success Rate: 100.0%
