@@ -1,6 +1,38 @@
-    - name: Run tests with pytest
-      env:
-        PYTHONPATH: ${{ github.workspace }}/src
+name: HIPAA Training System CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11', '3.12']
+
+    steps:
+    - name: Checkout repository code
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install Python dependencies
       run: |
-        echo "Starting pytest..."
-        timeout 120 pytest tests/ -v --disable-warnings || true
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest
+
+    - name: Run tests with pytest
+      run: pytest tests/ -v --disable-warnings
+
+    - name: Test Flask application startup
+      run: |
+        timeout 10s python run.py || exit 0
+      env:
+        PYTHONPATH: src
