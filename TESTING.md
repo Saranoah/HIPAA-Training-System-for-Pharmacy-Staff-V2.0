@@ -153,12 +153,6 @@ python hipaa_training_v2.py
 | **Exit** | Choose option 7 | Clean exit with message | ⬜ |
 | **System Info** | Choose option 6 | Shows thresholds and stats | ⬜ |
 
-
-**In the "Manual Testing" section:**
-
-Update the test suites for your new content:
-
-```markdown
 ### Test Suite 2: Lesson Display (13 Lessons)
 
 | Test | Steps | Expected Result | Status |
