@@ -19,7 +19,7 @@ Comprehensive guide for deploying the HIPAA Training System in various environme
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/yourusername/hipaa-training-system.git
+git clone https://github.com/Saranoah/HIPAA-Training-System-for-Pharmacy-Staff-V2.0.git
 cd hipaa-training-system
 
 # 2. Run setup script
@@ -34,7 +34,7 @@ python hipaa_ai_pharmacy_production.py
 
 ```batch
 REM 1. Clone repository
-git clone https://github.com/yourusername/hipaa-training-system.git
+git clone https://github.com/Saranoah/HIPAA-Training-System-for-Pharmacy-Staff-V2.0.git
 cd hipaa-training-system
 
 REM 2. Run setup script
@@ -56,7 +56,7 @@ python hipaa_ai_pharmacy_production.py
 
 1. **Download and Extract**
    ```bash
-   wget https://github.com/yourusername/hipaa-training-system/archive/main.zip
+   wget https://github.com/Saranoah/HIPAA-Training-System-for-Pharmacy-Staff-V2.0/archive/main.zip
    unzip main.zip
    cd hipaa-training-system-main
    ```
