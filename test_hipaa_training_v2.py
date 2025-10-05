@@ -8,7 +8,12 @@ import unittest
 import json
 import os
 from datetime import datetime
+import sys
+import io
 
+# Fix Windows encoding issues
+if sys.platform == 'win32':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 # Import from main application
 from hipaa_training_v2 import (
     calculate_score,
