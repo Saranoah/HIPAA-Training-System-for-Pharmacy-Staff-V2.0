@@ -38,6 +38,7 @@ A production-ready, interactive HIPAA compliance training and self-assessment sy
 5. ✅ Stolen unencrypted device  
 
 **NEW 10 Questions:**
+
 6. ✅ PHI identification  
 7. ✅ 30-day access timeline  
 8. ✅ Business Associate Agreements  
