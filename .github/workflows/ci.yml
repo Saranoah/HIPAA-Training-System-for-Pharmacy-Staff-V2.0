@@ -2,37 +2,33 @@ name: HIPAA Training System CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, develop ]
   pull_request:
-    branches: [ main ]
-
-concurrency:
-  group: hipaa-tests
-  cancel-in-progress: false  # prevents GitHub from canceling previous runs
+    branches: [ main, develop ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 30  # extend time limit
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11', '3.12']
 
     steps:
-    - name: Checkout repository
+    - name: Checkout repository code
       uses: actions/checkout@v4
 
-    - name: Set up Python
+    - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
-        python-version: '3.10'
-        cache: 'pip'
+        python-version: ${{ matrix.python-version }}
 
-    - name: Install dependencies
+    - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install pytest
 
-    - name: Wait before testing (stabilize environment)
-      run: sleep 5
-
     - name: Run tests with pytest
-      run: PYTHONPATH=src pytest tests/ -v --disable-warnings
+      env:
+        PYTHONPATH: ${{ github.workspace }}/src
+      run: pytest tests/ -v --disable-warnings
