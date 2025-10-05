@@ -1,6 +1,7 @@
 import json
 import pytest
-from src.hipaa_ai_pharmacy_production import app, load_user_progress, create_new_user_progress, calculate_level
+from src.hipaa_ai_pharmacy_production import create_app, load_user_progress, create_new_user_progress, calculate_level
+
 
 @pytest.fixture
 def client():
