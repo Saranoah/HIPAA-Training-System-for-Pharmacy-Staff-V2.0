@@ -326,7 +326,23 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## ⚠️ Disclaimer
 
-This software is provided for educational and training purposes only. It does not constitute legal advice or official HIPAA certification. Organizations should consult with legal counsel and compliance experts to ensure full HIPAA compliance.
+LEGAL DISCLAIMER:
+
+This training system provides educational content about HIPAA 
+regulations based on 45 CFR Parts 160 and 164. It is designed 
+to assist covered entities in meeting their workforce training 
+requirements under HIPAA.
+
+This training does not constitute legal advice. Covered entities 
+remain responsible for their own HIPAA compliance. We recommend 
+consulting with your Privacy Officer or legal counsel regarding 
+your specific compliance obligations.
+
+Completion of this training does not guarantee HIPAA compliance 
+or immunity from enforcement actions. Users should verify that 
+training content aligns with their organization's policies and 
+applicable state laws.
+
 
 ## 👥 Authors
 
@@ -355,4 +371,14 @@ This software is provided for educational and training purposes only. It does no
 
 **Made with ❤️ for healthcare compliance**
 
-*Last updated: October 2, 2025*
+
+© 2025 HIPAA Training System for Pharmacy Staff
+
+Training content based on 45 CFR Parts 160 and 164 (HIPAA Privacy, 
+Security, and Breach Notification Rules). This educational tool is 
+designed to assist covered entities in meeting workforce training 
+requirements. Not legal advice. Consult your Privacy Officer or 
+legal counsel for compliance guidance.
+
+
+*Last Updated: October 2025 | Version 2.0*
