@@ -1,168 +1,183 @@
-# HIPAA-Training-System-for-Pharmacy-Staff-V2.0
-A training system for pharmacy staff on HIPAA compliance
+# 🏥 HIPAA Training System for Pharmacy Staff (V2.0)
 
+A production-ready, interactive HIPAA compliance training and self-assessment system designed specifically for pharmacy staff.
 
 ![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Tests](https://img.shields.io/badge/tests-passing-brightgreen)
 ![Code Quality](https://img.shields.io/badge/code%20quality-A+-brightgreen)
 
-A production-ready, interactive HIPAA compliance training and self-assessment system designed specifically for pharmacy staff.
+---
 
 ## 🌟 Features
- 
-- 📚 13 Comprehensive Lessons (From 3 → 13)
 
-✅ What is PHI? - NEW! Defines all 18 identifiers
-✅ Privacy Rule - Enhanced with more details
-✅ Security Rule - Complete technical safeguards
-✅ Patient Rights - NEW! All 7 rights explained
-✅ Breach Notification - Timeline and procedures
-✅ Violations & Penalties - NEW! Real fines and consequences
-✅ Business Associates - NEW! BAA requirements
-✅ Secure Disposal - NEW! Proper PHI destruction
-✅ Access Controls - NEW! Password & login requirements
-✅ Privacy Practices Notice - NEW! NPP requirements
-✅ Training Requirements - NEW! Annual training rules
-✅ Incidental Disclosures - NEW! What's allowed vs not
-✅ Patient Request Procedures - NEW! How to respond
+### 📚 13 Comprehensive Lessons (From 3 → 13)
+1. ✅ **What is PHI?** – NEW! Defines all 18 identifiers  
+2. ✅ **Privacy Rule** – Enhanced with more details  
+3. ✅ **Security Rule** – Complete technical safeguards  
+4. ✅ **Patient Rights** – NEW! All 7 rights explained  
+5. ✅ **Breach Notification** – Timeline and procedures  
+6. ✅ **Violations & Penalties** – NEW! Real fines and consequences  
+7. ✅ **Business Associates** – NEW! BAA requirements  
+8. ✅ **Secure Disposal** – NEW! Proper PHI destruction  
+9. ✅ **Access Controls** – NEW! Password & login requirements  
+10. ✅ **Privacy Practices Notice** – NEW! NPP requirements  
+11. ✅ **Training Requirements** – NEW! Annual training rules  
+12. ✅ **Incidental Disclosures** – NEW! What's allowed vs not  
+13. ✅ **Patient Request Procedures** – NEW! How to respond  
 
-🎯 15 Quiz Questions (From 5 → 15)
-Original 5 Questions:
+---
 
-✅ Email breach scenario
-✅ Unauthorized access
-✅ Minimum necessary
-✅ Family member inquiry
-✅ Stolen unencrypted device
+### 🎯 15 Quiz Questions (From 5 → 15)
 
-NEW 10 Questions:
-6. ✅ PHI identification
-7. ✅ 30-day access timeline
-8. ✅ Business Associate Agreements
-9. ✅ Proper disposal methods
-10. ✅ Penalty amounts
-11. ✅ Password sharing
-12. ✅ Training frequency
-13. ✅ Confidential communications
-14. ✅ Incidental disclosures
-15. ✅ Patient complaint rights
-✅ 15 Checklist Items (From 10 → 15)
-Organized by Category:
-Training (2 items):
+**Original 5 Questions:**
+1. ✅ Email breach scenario  
+2. ✅ Unauthorized access  
+3. ✅ Minimum necessary  
+4. ✅ Family member inquiry  
+5. ✅ Stolen unencrypted device  
 
-Privacy Rule training completed
-Security Rule requirements reviewed
+**NEW 10 Questions:**
+6. ✅ PHI identification  
+7. ✅ 30-day access timeline  
+8. ✅ Business Associate Agreements  
+9. ✅ Proper disposal methods  
+10. ✅ Penalty amounts  
+11. ✅ Password sharing  
+12. ✅ Training frequency  
+13. ✅ Confidential communications  
+14. ✅ Incidental disclosures  
+15. ✅ Patient complaint rights  
 
-Knowledge (5 items):
+---
 
-Breach notification timeline understood
-Can identify unauthorized access
-Minimum necessary standard known
-NEW: Can identify all 18 PHI types
-NEW: Understands all 7 patient rights
+### ✅ 15 Checklist Items (From 10 → 15)
 
-Technical (5 items):
+**Training (2 items):**
+- Privacy Rule training completed  
+- Security Rule requirements reviewed  
 
-ePHI encrypted at rest
-ePHI encrypted in transit
-Audit logs enabled
-NEW: Cross-cut shredders available
-NEW: Unique logins for all staff
+**Knowledge (5 items):**
+- Breach notification timeline understood  
+- Can identify unauthorized access  
+- Minimum necessary standard known  
+- NEW: Can identify all 18 PHI types  
+- NEW: Understands all 7 patient rights  
 
-Compliance (3 items):
+**Technical (5 items):**
+- ePHI encrypted at rest  
+- ePHI encrypted in transit  
+- Audit logs enabled  
+- NEW: Cross-cut shredders available  
+- NEW: Unique logins for all staff  
 
-Annual staff training completed
-Business Associate Agreements signed
-NEW: Notice of Privacy Practices provided
+**Compliance (3 items):**
+- Annual staff training completed  
+- Business Associate Agreements signed  
+- NEW: Notice of Privacy Practices provided  
 
+---
 
-📊 Coverage Comparison
-AreaBeforeAfterImprovementLessons3 basic13 comprehensive+333%Quiz Questions5 scenarios15 detailed+200%Checklist Items10 items15 items+50%XP Potential125 XP345 XP+176%HIPAA Coverage70%95%++25%
+## 📊 Coverage Comparison
 
-🎓 Learning Path
-Total Training Time: 60-75 minutes
-Phase 1: Foundation (20 min)
+| Area              | Before | After | Improvement |
+|--------------------|--------|--------|-------------|
+| Lessons            | 3 basic | 13 comprehensive | +333% |
+| Quiz Questions     | 5 scenarios | 15 detailed | +200% |
+| Checklist Items    | 10 items | 15 items | +50% |
+| XP Potential       | 125 XP | 345 XP | +176% |
+| HIPAA Coverage     | 70% | 95% | +25% |
 
-What is PHI? (5 min)
-Privacy Rule (5 min)
-Security Rule (5 min)
-Patient Rights (5 min)
+---
 
-Phase 2: Operations (20 min)
-5. Breach Notification (5 min)
-6. Business Associates (5 min)
-7. Secure Disposal (5 min)
-8. Access Controls (5 min)
-Phase 3: Advanced (15 min)
-9. Privacy Practices Notice (4 min)
-10. Training Requirements (3 min)
-11. Incidental Disclosures (4 min)
-12. Patient Request Procedures (4 min)
-13. Violations & Penalties (5 min - save for impact!)
-Phase 4: Assessment (15 min)
+## 🎓 Learning Path
 
-Complete 15-question quiz
-Review explanations
+**Total Training Time:** 60–75 minutes  
 
-Phase 5: Self-Audit (10 min)
+### Phase 1: Foundation (20 min)
+- What is PHI? (5 min)  
+- Privacy Rule (5 min)  
+- Security Rule (5 min)  
+- Patient Rights (5 min)  
 
-Complete 15-item checklist
-Generate compliance report
+### Phase 2: Operations (20 min)
+- Breach Notification (5 min)  
+- Business Associates (5 min)  
+- Secure Disposal (5 min)  
+- Access Controls (5 min)  
+
+### Phase 3: Advanced (15 min)
+- Privacy Practices Notice (4 min)  
+- Training Requirements (3 min)  
+- Incidental Disclosures (4 min)  
+- Patient Request Procedures (4 min)  
+- Violations & Penalties (5 min)  
+
+### Phase 4: Assessment (15 min)
+- Complete 15-question quiz  
+- Review explanations  
+
+### Phase 5: Self-Audit (10 min)
+- Complete 15-item checklist  
+- Generate compliance report  
+
+---
 
 ## 📋 Requirements
 
-- Python 3.8 or higher
+- Python 3.8 or higher  
 - No external dependencies (uses only standard library)
+
+---
 
 ## 🚀 Quick Start
 
 ### Installation
 
 ```bash
-# Clone the repository
 git clone https://github.com/Saranoah/HIPAA-Training-System-for-Pharmacy-Staff-V2.0.git
 cd HIPAA-Training-System-for-Pharmacy-Staff-V2.0
-
-
-# Run the program
 python hipaa_ai_pharmacy_production.py
+
 ```
 
 ### First Run
 
-```bash
 $ python hipaa_ai_pharmacy_production.py
 === HIPAA AI Learning & Self-Check System ===
 • Pass Threshold: 80%
 • Good Threshold: 60%
 • Scenarios Available: 3
 • Checklist Items: 10
-
 Run system self-test? (y/n): y
+
 ```
 
-## 📖 Usage Guide
+📖 Usage Guide
+Main Menu Options
 
-### Main Menu Options
+View HIPAA Lessons
 
-1. **View HIPAA Lessons** - Study comprehensive HIPAA content
-2. **Complete Self-Audit Checklist** - Answer 10 compliance questions
-3. **Take Scenario Quiz** - Test knowledge with real-world scenarios
-4. **Generate Compliance Report** - View scores and save progress
-5. **View Progress History** - Review previous training sessions
-6. **System Information** - Display configuration and statistics
-7. **Exit Program** - Save and close application
+Complete Self-Audit Checklist
 
-### Configuration
+Take Scenario Quiz
 
-Edit these constants in the code to customize thresholds:
+Generate Compliance Report
 
-```python
-PASS_THRESHOLD: int = 80        # Minimum passing score
-GOOD_THRESHOLD: int = 60        # Good performance threshold
-MAX_QUIZ_ATTEMPTS: int = 3      # Maximum input retries
-PROGRESS_FILE: str = "hipaa_progress.json"  # Progress save location
+View Progress History
+
+System Information
+
+Exit Program
+
+
+## Configuration 
+
+PASS_THRESHOLD = 80
+GOOD_THRESHOLD = 60
+MAX_QUIZ_ATTEMPTS = 3
+PROGRESS_FILE = "hipaa_progress.json"
+
 ```
 
 ## 🧪 Testing
