@@ -20,3 +20,6 @@ jobs:
 
       - name: Run tests with pytest
         run: pytest tests/ -v --disable-warnings
+
+- name: Install package in development mode
+  run: pip install -e .
