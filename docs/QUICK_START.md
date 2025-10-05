@@ -260,15 +260,18 @@ touch hipaa_progress.json
 **Ready to start? Run**: `python hipaa_ai_pharmacy_production.py` 🚀
 
 **Last Updated**: October 2, 2025 START:     python hipaa_ai_*.py          │
-│ TEST:      python test_hipaa_*.py        │
+│
+  TEST:  python test_hipaa_*.py            │
 │ EXIT:      Choose option 7               │
 ├──────────────────────────────────────────┤
-│ SCORES:                                  │
+│ SCORES: 
+│
 │   80%+  → Passing ✅                     │
 │   60-79% → Good   📚                     │
 │   <60%  → Review  📖                     │
 ├──────────────────────────────────────────┤
-│ FILES:                                   │
+│ FILES:    
+│
 │   Progress: hipaa_progress.json          │
 │   Logs:     hipaa_training_audit.log     │
 │   Backup:   hipaa_progress.json.backup   │
