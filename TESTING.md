@@ -15,18 +15,18 @@ This document provides comprehensive testing procedures for the HIPAA Training S
 
 ### Run All Tests
 
+### Run All Tests
+
 ```bash
 # Quick test run
 python test_hipaa_training_v2.py
 
-# Verbose output
+# Verbose output  
 python test_hipaa_training_v2.py -v
 
-# Specific test class
-python -m unittest test_hipaa_training.TestScoreCalculation -v
-```
+# Expected Output
 
-### Expected Output
+
 
 ```
 TEST SUMMARY
