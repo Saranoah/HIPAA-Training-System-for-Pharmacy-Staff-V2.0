@@ -16,13 +16,16 @@ Thank you for your interest in contributing! This document provides guidelines f
 
 ### Our Pledge
 
-We are committed to providing a welcoming and inclusive experience for everyone. We expect all contributors to:
+### Our Pledge
+We are committed to a welcoming and inclusive experience. We expect all contributors to:
+- ... [your existing points] ...
 
-- Use welcoming and inclusive language
-- Be respectful of differing viewpoints
-- Accept constructive criticism gracefully
-- Focus on what's best for the community
-- Show empathy towards others
+### HIPAA-Focused Conduct
+As a project handling sensitive compliance training, all contributors must also:
+- **Protect Sensitive Information:** Never post real patient data, internal configuration details, or any other sensitive information in issues, pull requests, or discussions.
+- **Report Violations:** Confidentially report any concerns about unethical conduct or potential privacy/Security Rule violations to the project maintainers:cite[7].
+- **Exercise Professional Judgment:** Understand that actions within the project can have real-world implications for healthcare organizations and patient privacy:cite[10].
+  
 
 ## 🚀 Getting Started
 
