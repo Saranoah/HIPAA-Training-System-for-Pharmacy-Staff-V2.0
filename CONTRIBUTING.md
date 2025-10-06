@@ -129,6 +129,18 @@ def calc(r):
     return (c/len(r))*100
 ```
 
+## 🔒 HIPAA & Security Guidelines
+
+### Handling Protected Health Information (PHI)
+- **No Real PHI in Development or Testing:** Never use real patient data for testing, debugging, or in sample files:cite[9]. Generate realistic but completely fictional mock data.
+- **Secure Data Practices:** Be mindful of how data is handled, stored, and logged. Avoid printing sensitive information to consoles or logs, even during development.
+- **Reporting Security Concerns:** All contributors are obligated to report any potential security flaws or privacy concerns immediately by emailing [your designated security contact]. Do not publicly disclose the issue on GitHub issues:cite[7].
+
+### Security-First Development
+- **Risk Assessment:** Consider the privacy and security implications of any new feature or code change.
+- **Dependency Management:** Regularly update dependencies to patch known vulnerabilities. PRs that address security vulnerabilities in dependencies are highly prioritized.
+
+
 ### Type Hints Required
 
 All functions must include type hints:
