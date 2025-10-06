@@ -10,16 +10,6 @@ Get up and running with the HIPAA Training System V2.0 in 5 minutes.
 ```bash
 git clone https://github.com/Saranoah/HIPAA-Training-System-for-Pharmacy-Staff-V2.0.git
 cd HIPAA-Training-System-for-Pharmacy-Staff-V2.0
-Here's the updated QUICK_START.md for your HIPAA Training System V2.0:
-
-```markdown
-# Quick Start Guide - V2.0
-
-Get up and running with the HIPAA Training System V2.0 in 5 minutes.
-
-## 🚀 Installation (3 Steps)
-
-### Step 1: Download
 
 **Option A - Git Clone**:
 ```bash
