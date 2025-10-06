@@ -16,7 +16,6 @@ Thank you for your interest in contributing! This document provides guidelines f
 
 ### Our Pledge
 
-### Our Pledge
 We are committed to a welcoming and inclusive experience. We expect all contributors to:
 - ... [your existing points] ...
 
