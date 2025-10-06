@@ -19,7 +19,7 @@ Comprehensive guide for deploying the HIPAA Training System V2.0 in various envi
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/yourusername/HIPAA-Training-System-for-Pharmacy-Staff-V2.0.git
+git clone https://github.com/Saranoah/HIPAA-Training-System-for-Pharmacy-Staff-V2.0.git
 cd HIPAA-Training-System-for-Pharmacy-Staff-V2.0
 
 # 2. Run automated setup
