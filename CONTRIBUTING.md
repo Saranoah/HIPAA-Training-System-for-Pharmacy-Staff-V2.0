@@ -1,4 +1,4 @@
-i hope you are not fed-up with my request i would like to thank you for your efforts this is the last i hope no more errors...CONTRIBUTING.md:# Contributing to HIPAA Training System
+# Contributing to HIPAA Training System
 
 Thank you for your interest in contributing! This document provides guidelines for contributing to the project.
 
