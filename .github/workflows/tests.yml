@@ -27,12 +27,10 @@ jobs:
     - name: Display Python version
       run: python --version
     
-     - name: Run tests
+    - name: Run tests
       run: python test_hipaa_training_v2.py
       env: # Add this environment variable
-      PYTHONIOENCODING: utf-8
+        PYTHONIOENCODING: utf-8
     
     - name: Verify application starts
       run: python -c "import hipaa_training_v2; print('Import successful')"
-
-   
