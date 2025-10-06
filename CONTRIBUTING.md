@@ -483,7 +483,7 @@ When making your first contribution, add yourself to the contributors list:
 ## Contributors
 
 - [@Saranoah](https://github.com/Saranoah) - Creator and maintainer
-- [@Saranoah](https://github.com/Saranoah) - Brief description of contribution
+- [@YourUsername](https://github.com/YourUsername) - Brief description of contribution
 ```
 
 ## ⚖️ Legal
