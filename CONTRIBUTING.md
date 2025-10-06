@@ -16,14 +16,21 @@ Thank you for your interest in contributing! This document provides guidelines f
 
 ### Our Pledge
 
-We are committed to a welcoming and inclusive experience. We expect all contributors to:
-- ... [your existing points] ...
+We are committed to providing a welcoming and inclusive experience for everyone. We expect all contributors to:
+
+- Use welcoming and inclusive language
+- Be respectful of differing viewpoints
+- Accept constructive criticism gracefully
+- Focus on what's best for the community
+- Show empathy towards others
 
 ### HIPAA-Focused Conduct
+
 As a project handling sensitive compliance training, all contributors must also:
+
 - **Protect Sensitive Information:** Never post real patient data, internal configuration details, or any other sensitive information in issues, pull requests, or discussions.
-- **Report Violations:** Confidentially report any concerns about unethical conduct or potential privacy/Security Rule violations to the project maintainers:cite[7].
-- **Exercise Professional Judgment:** Understand that actions within the project can have real-world implications for healthcare organizations and patient privacy:cite[10].
+- **Report Violations:** Confidentially report any concerns about unethical conduct or potential privacy/security violations to the project maintainers.
+- **Exercise Professional Judgment:** Understand that actions within the project can have real-world implications for healthcare organizations and patient privacy.
   
 
 ## 🚀 Getting Started
@@ -214,6 +221,11 @@ def function_name():
 
 ### All Changes Must Include Tests
 
+### HIPAA Compliance Verification
+In addition to functional tests, the following must be verified:
+- **Data Anonymity:** All test data is demonstrably fictional and cannot be linked to real individuals.
+- **Audit Trail:** New features that handle user data maintain a clear audit trail where appropriate.
+- **Error Handling:** Systems fail securely, without leaking internal information or PHI in error messages:cite[1].
 For new features:
 ```python
 class TestNewFeature(unittest.TestCase):
@@ -270,6 +282,9 @@ python test_hipaa_training_v2.py -v
 - [ ] Self-review completed
 - [ ] Comments added for complex code
 - [ ] No debug code or print statements
+- [ ] **No Real PHI:** I confirm that no real Protected Health Information is used in my code or tests.
+- [ ] **Security Review:** I have considered the security and privacy implications of my changes.
+
 
 ### PR Template
 
