@@ -234,3 +234,11 @@ echo.
 echo Setup completed successfully! 🎉
 echo.
 pause
+
+🚀 Usage:
+batch
+# Simply run the setup script
+setup.bat
+
+# Or if you prefer command line
+setup.bat /Y  # Auto-accept all prompts (if you modify script)
