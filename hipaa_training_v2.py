@@ -8,7 +8,20 @@ import json
 import os
 from datetime import datetime
 from typing import Dict, List, Tuple
-
+def show_welcome():
+    """Display professional welcome screen"""
+    print("\n" + "="*70)
+    print("╔══════════════════════════════════════════════════════════════════╗")
+    print("║         HIPAA TRAINING SYSTEM V2.0 - PROFESSIONAL EDITION       ║")
+    print("║              Complete Training for Pharmacy Staff                ║")
+    print("╚══════════════════════════════════════════════════════════════════╝")
+    print("="*70)
+    print("\n📚 13 Comprehensive Lessons | 🎯 15 Quiz Questions | ✅ 15-Item Checklist")
+    print("\n95% HIPAA Coverage | Certification-Grade Training")
+    print("\nDeveloped by: Saranoah")
+    print("Support: [Your Email]")
+    print("="*70)
+    input("\nPress Enter to begin training...")
 # Constants
 PASS_THRESHOLD = 80
 GOOD_THRESHOLD = 60
@@ -390,13 +403,21 @@ def take_quiz() -> None:
     percentage = (score / len(QUIZ_QUESTIONS)) * 100
     print(f"\nFinal Score: {score}/{len(QUIZ_QUESTIONS)} ({percentage:.1f}%)")
     print(get_performance_feedback(percentage))
+    # Generate certificate if passed
+    if percentage >= PASS_THRESHOLD:
+        print("\n🎉 Congratulations! You passed!")
+        name = input("\nEnter your name for certificate: ").strip()
+        if name:
+            cert, filename = generate_certificate(name, percentage)
+            print(cert)
+            print(f"\nCertificate saved to: {filename}")
     input("\nPress Enter to continue...")
 
-def complete_checklist() -> None:
-    """Interactive checklist completion"""
-    print("\n" + "="*70)
-    print("COMPLIANCE CHECKLIST (15 Items)")
-    print("="*70)
+def main() -> None:
+    """Main application loop"""
+    show_welcome()  # Add this line
+    
+    while True:
     
     for item_data in CHECKLIST_ITEMS:
         text = item_data["text"]
@@ -410,7 +431,10 @@ def complete_checklist() -> None:
     
     print("\nChecklist completed!")
     input("Press Enter to continue...")
-
+# Offer CSV export
+    export = input("\nExport report to CSV? (yes/no): ").strip().lower()
+    if export in ['y', 'yes']:
+        export_report_csv()
 def generate_report() -> None:
     """Generate compliance report"""
     print("\n" + "="*70)
@@ -438,13 +462,64 @@ def generate_report() -> None:
     for cat, stats in categories.items():
         cat_pct = (stats["completed"] / stats["total"]) * 100
         print(f"  {cat}: {stats['completed']}/{stats['total']} ({cat_pct:.0f}%)")
+    def export_report_csv() -> None:
+    """Export compliance report as CSV"""
+    import csv
     
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    filename = f"hipaa_compliance_report_{timestamp}.csv"
+    
+    try:
+        with open(filename, 'w', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow(['Category', 'Item', 'Status', 'Compliant'])
+            
+            for item_data in CHECKLIST_ITEMS:
+                text = item_data["text"]
+                category = item_data["category"]
+                status = 'YES' if checklist[text] else 'NO'
+                compliant = '✓' if checklist[text] else '✗'
+                writer.writerow([category, text, status, compliant])
+        
+        print(f"\n✓ Report exported to: {filename}")
+        return filename
+    except Exception as e:
+        print(f"\n✗ Error exporting report: {e}")
+        return None
     print("\nDetailed Checklist:")
     for item_data in CHECKLIST_ITEMS:
         text = item_data["text"]
         status = "✓" if checklist[text] else "✗"
         print(f"  [{status}] {text}")
+    def generate_certificate(name: str, score: float) -> str:
+    """Generate text certificate"""
+    cert_id = datetime.now().strftime('%Y%m%d%H%M%S')
+    cert = f"""
+╔══════════════════════════════════════════════════════════════════╗
+║                    CERTIFICATE OF COMPLETION                      ║
+╠══════════════════════════════════════════════════════════════════╣
+║                                                                   ║
+║  This certifies that                                             ║
+║                                                                   ║
+║  {name:^63}  ║
+║                                                                   ║
+║  has successfully completed the HIPAA Training System V2.0       ║
+║  for Pharmacy Staff with a score of {score:.1f}%                    ║
+║                                                                   ║
+║  Date: {datetime.now().strftime('%B %d, %Y'):^54}  ║
+║  Certificate ID: {cert_id:^46}  ║
+║                                                                   ║
+║  Valid for 12 months from issue date                             ║
+║                                                                   ║
+╚══════════════════════════════════════════════════════════════════╝
+    """
     
+    # Save to file
+    filename = f"HIPAA_Certificate_{cert_id}.txt"
+    with open(filename, 'w') as f:
+        f.write(cert)
+    
+    return cert, filename
     # Save progress
     try:
         progress = {
