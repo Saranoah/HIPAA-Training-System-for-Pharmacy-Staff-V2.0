@@ -4,139 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HIPAA Training System V2.0 - Pharmacy Staff</title>
-    <style>
-        :root {
-            --primary-color: #4CAF50;
-            --secondary-color: #2196F3;
-            --accent-color: #FF9800;
-            --danger-color: #f44336;
-            --light-color: #f5f5f5;
-            --dark-color: #333;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: var(--dark-color);
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .header {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: var(--shadow);
-            text-align: center;
-        }
-        
-        .header h1 {
-            color: var(--primary-color);
-            margin-bottom: 10px;
-            font-size: 2.5em;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .stat-card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: var(--shadow);
-        }
-        
-        .stat-number {
-            font-size: 2.5em;
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-        
-        .modules-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-        }
-        
-        .module-card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: var(--shadow);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .module-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .module-icon {
-            font-size: 3em;
-            margin-bottom: 15px;
-        }
-        
-        .progress-bar {
-            background: var(--light-color);
-            border-radius: 10px;
-            height: 8px;
-            margin: 15px 0;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: var(--primary-color);
-            border-radius: 10px;
-        }
-        
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 25px;
-            font-size: 1em;
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-            margin-top: 10px;
-        }
-        
-        .btn-primary {
-            background: var(--primary-color);
-            color: white;
-        }
-        
-        .btn-secondary {
-            background: var(--secondary-color);
-            color: white;
-        }
-    </style>
+    <meta name="description" content="HIPAA Training System V2.0 for Pharmacy Staff">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </head>
 <body>
     <div class="container">
-        <div class="header">
+        <header class="header" role="banner">
             <h1>🏥 HIPAA Training System V2.0</h1>
-            <p>Professional Training for Pharmacy Staff</p>
-        </div>
+            <p>Professional Training for {{ user_role }} at {{ facility }}</p>
+            <nav class="nav" aria-label="Main navigation">
+                <ul>
+                    <li><a href="{{ url_for('index') }}" aria-current="page">Dashboard</a></li>
+                    <li><a href="{{ url_for('lessons') }}">Lessons</a></li>
+                    <li><a href="{{ url_for('quiz') }}">Quiz</a></li>
+                    <li><a href="{{ url_for('checklist') }}">Checklist</a></li>
+                    <li><a href="{{ url_for('mfa_setup') }}">MFA Setup</a></li>
+                    {% if user_role == 'Admin' %}
+                    <li><a href="{{ url_for('admin_audit_logs') }}">Audit Logs</a></li>
+                    {% endif %}
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
         
         <div class="stats-grid">
             <div class="stat-card">
@@ -152,43 +44,52 @@
                 <div>Checklist Items</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">95%</div>
+                <div class="stat-number">{{ hipaa_coverage|round|int }}%</div>
                 <div>HIPAA Coverage</div>
             </div>
         </div>
         
-        <div class="modules-grid">
-            <div class="module-card" onclick="window.location.href='/lessons'">
-                <div class="module-icon">📚</div>
+        <div class="modules-grid" role="region" aria-label="Training Modules">
+            <div class="module-card">
+                <div class="module-icon" aria-hidden="true">📚</div>
                 <h3>HIPAA Lessons</h3>
                 <p>Master comprehensive topics covering Privacy Rule, Security Rule, and more.</p>
-                <div class="progress-bar">
+                <div class="progress-bar" role="progressbar" aria-valuenow="{{ lessons_progress }}" aria-valuemin="0" aria-valuemax="100">
                     <div class="progress-fill" style="width: {{ lessons_progress }}%"></div>
                 </div>
                 <div>{{ lessons_completed }}/{{ total_lessons }} Completed</div>
-                <button class="btn btn-primary">Start Learning</button>
+                <a href="{{ url_for('lessons') }}" class="btn btn-primary" aria-label="Start HIPAA Lessons">Start Learning</a>
             </div>
             
-            <div class="module-card" onclick="window.location.href='/quiz'">
-                <div class="module-icon">🎯</div>
+            <div class="module-card">
+                <div class="module-icon" aria-hidden="true">🎯</div>
                 <h3>Knowledge Quiz</h3>
                 <p>Test your understanding with scenario-based questions.</p>
-                <div class="progress-bar">
+                <div class="progress-bar" role="progressbar" aria-valuenow="{{ quiz_progress }}" aria-valuemin="0" aria-valuemax="100">
                     <div class="progress-fill" style="width: {{ quiz_progress }}%"></div>
                 </div>
                 <div>Score: {{ quiz_progress|round|int }}%</div>
-                <button class="btn btn-secondary">Take Quiz</button>
+                <a href="{{ url_for('quiz') }}" class="btn btn-secondary" aria-label="Take Knowledge Quiz">Take Quiz</a>
             </div>
             
-            <div class="module-card" onclick="window.location.href='/checklist'">
-                <div class="module-icon">✅</div>
+            <div class="module-card">
+                <div class="module-icon" aria-hidden="true">✅</div>
                 <h3>Compliance Checklist</h3>
                 <p>Complete essential compliance items across all safeguards.</p>
-                <div class="progress-bar">
+                <div class="progress-bar" role="progressbar" aria-valuenow="{{ checklist_progress }}" aria-valuemin="0" aria-valuemax="100">
                     <div class="progress-fill" style="width: {{ checklist_progress }}%"></div>
                 </div>
                 <div>{{ checklist_completed }}/{{ total_checklist }} Completed</div>
-                <button class="btn btn-primary">Start Checklist</button>
+                <a href="{{ url_for('checklist') }}" class="btn btn-primary" aria-label="Start Compliance Checklist">Start Checklist</a>
+            </div>
+        </div>
+        
+        <div id="session-timeout-warning" class="modal" role="dialog" aria-labelledby="timeout-title" style="display: none;">
+            <div class="modal-content">
+                <h2 id="timeout-title">Session Timeout Warning</h2>
+                <p>Your session will expire in <span id="countdown">60</span> seconds.</p>
+                <button class="btn btn-primary" onclick="extendSession()">Extend Session</button>
+                <button class="btn btn-secondary" onclick="window.location.href='{{ url_for('logout') }}'">Logout</button>
             </div>
         </div>
     </div>
