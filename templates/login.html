@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Login - HIPAA Training System{% endblock %}
+{% block content %}
+    <header class="header" role="banner">
+        <h1>🏥 HIPAA Training System V2.0</h1>
+        <div class="subtitle">Professional Training for Pharmacy Staff</div>
+    </header>
+
+    <section class="login-container" aria-label="Login form">
+        <h2>Login</h2>
+        <form method="POST" action="{{ url_for('login') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required aria-required="true">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required aria-required="true">
+            </div>
+            <button type="submit" class="btn">Login</button>
+        </form>
+    </section>
+
+    <style>
+        .login-container {
+            max-width: 400px;
+            margin: 20px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .alert {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .alert-error { background: var(--danger-color); color: white; }
+        .alert-info { background: var(--secondary-color); color: white; }
+        .alert-warning { background: var(--warning-color); color: #000; }
+    </style>
+{% endblock %}
