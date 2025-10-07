@@ -11,13 +11,13 @@ from datetime import datetime
 from typing import Dict, List, Tuple
 
 app = Flask(__name__)
-app.secret_key = 'your-secret-key-here'  # Change this in production!
+app.secret_key = 'dev-key-change-in-production'  # Change for production!
 
 # Constants
 PASS_THRESHOLD = 80
 GOOD_THRESHOLD = 60
 
-# 13 Complete Lessons (Same as your CLI version)
+# Your complete HIPAA content (using your exact data)
 LESSONS = {
     "Privacy Rule Basics": {
         "content": "The HIPAA Privacy Rule establishes national standards to protect individuals' medical records and other personal health information (PHI). It applies to health plans, healthcare clearinghouses, and healthcare providers. The rule requires appropriate safeguards to protect privacy and sets limits on uses and disclosures without patient authorization.",
@@ -36,21 +36,10 @@ LESSONS = {
             "Encryption strongly recommended for data at rest and in transit",
             "Regular security training required for all staff"
         ]
-    },
-    "Breach Notification Rule": {
-        "content": "The Breach Notification Rule requires covered entities to notify affected individuals, HHS, and sometimes the media following a breach of unsecured PHI. Notifications must be provided without unreasonable delay, no later than 60 days after discovery. Breaches affecting 500+ individuals require immediate media notification and HHS reporting.",
-        "key_points": [
-            "60-day notification deadline from breach discovery",
-            "Must notify patients, HHS, and media (for large breaches)",
-            "Breach defined as unauthorized access, use, or disclosure",
-            "Risk assessment required to determine if breach occurred"
-        ]
-    },
-    # ... (Include all 13 lessons from your CLI version)
-    # For brevity, I'm showing the structure. You'll copy all 13 lessons from hipaa_training_v2.py
+    }
+    # Add all 13 lessons from your CLI version here
 }
 
-# 15 Quiz Questions (Same as your CLI version)
 QUIZ_QUESTIONS = [
     {
         "question": "A pharmacy technician accidentally emails a patient's prescription details to the wrong email address. What is the FIRST action they should take?",
@@ -62,15 +51,14 @@ QUIZ_QUESTIONS = [
         ],
         "answer": "B",
         "explanation": "Immediate notification to supervisor and Privacy Officer is required. This allows for proper breach assessment, timely patient notification if needed, and documentation. Waiting or attempting to handle it alone delays required breach response procedures."
-    },
-    # ... (Include all 15 questions from your CLI version)
+    }
+    # Add all 15 questions from your CLI version here
 ]
 
-# 15-Item Checklist (Same as your CLI version)
 CHECKLIST_ITEMS = [
     {"text": "Completed Privacy Rule training", "category": "Training"},
     {"text": "Reviewed Security Rule requirements", "category": "Training"},
-    # ... (Include all 15 items from your CLI version)
+    # Add all 15 items from your CLI version here
 ]
 
 def initialize_user_progress():
@@ -79,7 +67,7 @@ def initialize_user_progress():
         session['progress'] = {
             'lessons_completed': [],
             'quiz_score': 0,
-            'quiz_answers': {},
+            'quiz_taken': False,
             'checklist_items': {item['text']: False for item in CHECKLIST_ITEMS},
             'started_at': datetime.now().isoformat()
         }
@@ -117,7 +105,9 @@ def index():
                          quiz_progress=quiz_progress,
                          total_lessons=len(LESSONS),
                          total_questions=len(QUIZ_QUESTIONS),
-                         total_checklist=len(CHECKLIST_ITEMS))
+                         total_checklist=len(CHECKLIST_ITEMS),
+                         lessons_completed=len(progress['lessons_completed']),
+                         checklist_completed=sum(progress['checklist_items'].values()))
 
 @app.route('/lessons')
 def lessons_list():
@@ -137,7 +127,8 @@ def lesson_detail(lesson_name):
     
     return render_template('lesson_detail.html', 
                          lesson_name=lesson_name, 
-                         lesson=lesson)
+                         lesson=lesson,
+                         completed=lesson_name in session['progress']['lessons_completed'])
 
 @app.route('/mark_lesson_complete', methods=['POST'])
 def mark_lesson_complete():
@@ -175,6 +166,7 @@ def submit_quiz():
     
     score = (correct / len(QUIZ_QUESTIONS)) * 100
     session['progress']['quiz_score'] = score
+    session['progress']['quiz_taken'] = True
     session['progress']['quiz_answers'] = user_answers
     session.modified = True
     
@@ -201,10 +193,12 @@ def update_checklist():
     item_text = request.json.get('item_text')
     completed = request.json.get('completed', False)
     
-    session['progress']['checklist_items'][item_text] = completed
-    session.modified = True
+    if item_text in session['progress']['checklist_items']:
+        session['progress']['checklist_items'][item_text] = completed
+        session.modified = True
+        return jsonify({'success': True})
     
-    return jsonify({'success': True})
+    return jsonify({'success': False})
 
 @app.route('/report')
 def report():
@@ -215,8 +209,8 @@ def report():
     checklist_score = calculate_score(progress['checklist_items'])
     quiz_score = progress['quiz_score']
     
-    # Calculate overall score (average of checklist and quiz)
-    overall_score = (checklist_score + quiz_score) / 2
+    # Calculate overall score
+    overall_score = (checklist_score + (quiz_score if progress['quiz_taken'] else 0)) / (2 if progress['quiz_taken'] else 1)
     
     return render_template('report.html',
                          progress=progress,
@@ -224,7 +218,9 @@ def report():
                          quiz_score=quiz_score,
                          overall_score=overall_score,
                          feedback=get_performance_feedback(overall_score),
-                         checklist_items=CHECKLIST_ITEMS)
+                         checklist_items=CHECKLIST_ITEMS,
+                         total_lessons=len(LESSONS),
+                         total_checklist=len(CHECKLIST_ITEMS))
 
 @app.route('/certificate')
 def certificate():
@@ -233,7 +229,7 @@ def certificate():
     progress = session['progress']
     
     # Check if user passed the quiz
-    if progress['quiz_score'] < PASS_THRESHOLD:
+    if not progress['quiz_taken'] or progress['quiz_score'] < PASS_THRESHOLD:
         return redirect(url_for('quiz'))
     
     return render_template('certificate.html',
