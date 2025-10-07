@@ -1,2 +1,2 @@
-# HIPAA Training System Dependencies
-# No external dependencies - pure Python!
+Flask==3.1.2
+Werkzeug==3.1.3
