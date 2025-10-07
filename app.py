@@ -80,14 +80,38 @@ CHECKLIST_ITEMS = [
 ]
 
 # Mock user database (replace with real database in production)
-USERS = {
-    "pharmacist1": {
-        "password_hash": generate_password_hash("secure123"),
-        "role": "Pharmacist",
-        "facility": "General Hospital Pharmacy",
-        "user_id": "PHARMACIST_001"
-    }
-}
+@app.route('/')
+@hipaa_security.require_authentication
+def index():
+    """Main dashboard with dynamic user data"""
+    user_progress = get_user_progress(session['user_id'])
+    total_lessons = len(LESSONS)
+    total_questions = len(QUIZ_QUESTIONS)
+    total_checklist = len(CHECKLIST_ITEMS)
+    lessons_completed = len(user_progress.get('lessons_completed', []))
+    lessons_progress = (lessons_completed / total_lessons * 100) if total_lessons > 0 else 0
+    quiz_progress = user_progress.get('quiz_score', 0)
+    checklist_completed = sum(1 for key in user_progress if key.startswith('checklist_') and user_progress[key])
+    checklist_progress = (checklist_completed / total_checklist * 100) if total_checklist > 0 else 0
+    hipaa_coverage = 95  # Replace with dynamic calculation if needed
+    
+    return render_template('index.html',
+                         user_id=session['user_id'],
+                         user_role=session.get('user_role', 'Pharmacist'),
+                         facility=session.get('facility', 'General Hospital Pharmacy'),
+                         progress=user_progress,
+                         lessons=LESSONS,
+                         checklist_items=CHECKLIST_ITEMS,
+                         total_lessons=total_lessons,
+                         total_questions=total_questions,
+                         total_checklist=total_checklist,
+                         lessons_completed=lessons_completed,
+                         lessons_progress=lessons_progress,
+                         quiz_progress=quiz_progress,
+                         checklist_completed=checklist_completed,
+                         checklist_progress=checklist_progress,
+                         hipaa_coverage=hipaa_coverage,
+                         csrf_token=hipaa_security.generate_csrf_token())
 
 # Routes
 @app.route('/')
