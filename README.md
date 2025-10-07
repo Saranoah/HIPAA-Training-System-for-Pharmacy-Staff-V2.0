@@ -142,10 +142,11 @@ A production-ready web application for pharmacy staff to complete HIPAA complian
 
 ### Installation
 
-```bash
-git clone https://github.com/Saranoah/HIPAA-Training-System-for-Pharmacy-Staff-V2.0.git
-cd HIPAA-Training-System-for-Pharmacy-Staff-V2.0
-python hipaa_training_v2.py
+## Setup
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Saranoah/HIPAA-Training-System-for-Pharmacy-Staff-V2.0
+   cd HIPAA-Training-System-for-Pharmacy-Staff-V2.0
 
 ```
 
