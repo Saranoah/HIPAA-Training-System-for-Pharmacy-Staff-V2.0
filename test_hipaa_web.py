@@ -94,3 +94,40 @@ def test_checklist_update(client):
     })
     assert response.status_code == 200
     assert response.json['success'] == True
+
+def test_mfa_setup(client, hipaa_security):
+    with client.session_transaction() as sess:
+        sess['user_id'] = 'PHARMACIST_001'
+        sess['user_role'] = 'Pharmacist'
+        sess['last_activity'] = datetime.now().isoformat()
+    
+    response = client.post('/mfa_setup')
+    assert response.status_code == 200
+    assert b'MFA QR Code' in response.data
+
+def test_mfa_verify(client, hipaa_security):
+    with client.session_transaction() as sess:
+        sess['user_id'] = 'PHARMACIST_001'
+        sess['user_role'] = 'Pharmacist'
+        sess['last_activity'] = datetime.now().isoformat()
+        sess['mfa_pending'] = 'PHARMACIST_001'
+    
+    # Mock MFA secret in database
+    with hipaa_security._get_db_connection() as conn:
+        secret = pyotp.random_base32()
+        conn.execute('UPDATE users SET mfa_secret = %s WHERE user_id = %s', (secret, 'PHARMACIST_001'))
+    
+    totp = pyotp.TOTP(secret)
+    response = client.post('/mfa_verify', data={'mfa_code': totp.now()})
+    assert response.status_code == 302
+    assert response.location.endswith('/')
+
+def test_admin_audit_logs(client, hipaa_security):
+    with client.session_transaction() as sess:
+        sess['user_id'] = 'ADMIN_001'
+        sess['user_role'] = 'Admin'
+        sess['last_activity'] = datetime.now().isoformat()
+    
+    response = client.get('/admin/audit_logs')
+    assert response.status_code == 200
+    assert b'Audit Logs' in response.data
