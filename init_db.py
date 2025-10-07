@@ -14,16 +14,17 @@ def init_database():
         with conn:
             with conn.cursor() as cur:
                 # Users table
-                cur.execute('''
-                    CREATE TABLE IF NOT EXISTS users (
-                        user_id VARCHAR(100) PRIMARY KEY,
-                        username VARCHAR(100) UNIQUE NOT NULL,
-                        password_hash TEXT NOT NULL,
-                        role VARCHAR(50) NOT NULL,
-                        facility VARCHAR(200) NOT NULL,
-                        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-                    )
-                ''')
+               cur.execute('''
+    CREATE TABLE IF NOT EXISTS users (
+        user_id VARCHAR(100) PRIMARY KEY,
+        username VARCHAR(100) UNIQUE NOT NULL,
+        password_hash TEXT NOT NULL,
+        role VARCHAR(50) NOT NULL,
+        facility VARCHAR(200) NOT NULL,
+        mfa_secret TEXT,  -- Added for MFA
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+''')
 
                 # Progress table
                 cur.execute('''
