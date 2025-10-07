@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 HIPAA Training System V2.0 - Production Ready Flask Application
-Complete web version with authentication, sessions, and all security features
+Complete web version with authentication, sessions, MFA, and security features
 """
 
 import os
@@ -9,11 +9,27 @@ import json
 from datetime import datetime
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for, flash
 from werkzeug.security import generate_password_hash, check_password_hash
-from security_middleware import HIPAASecurity, load_hipaa_config
+from security_middleware import HIPAASecurity, load_hipaa_config, SecurityEvent
 from config import Config
+import qrcode
+import io
+import base64
+import redis
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from prometheus_flask_exporter import PrometheusMetrics
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+# Initialize Redis for caching
+redis_client = redis.Redis(host=os.getenv('REDIS_HOST', 'localhost'), port=6379)
+
+# Initialize rate limiting
+limiter = Limiter(app, key_func=get_remote_address)
+
+# Initialize Prometheus monitoring
+metrics = PrometheusMetrics(app)
 
 # Initialize HIPAA Security
 hipaa_security = HIPAASecurity(app)
@@ -90,31 +106,46 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    """Secure login with brute force protection"""
+    """Secure login with brute force protection and MFA"""
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
         
-        # Check brute force protection
         if not hipaa_security.check_brute_force(username):
             flash('Too many failed attempts. Please try again later.', 'error')
             return render_template('login.html')
         
         user = USERS.get(username)
         if user and check_password_hash(user['password_hash'], password):
-            # Successful login
             session['user_id'] = user['user_id']
             session['user_role'] = user['role']
             session['facility'] = user['facility']
             session['last_activity'] = datetime.now().isoformat()
             
-            hipaa_security.clear_failed_attempts(username)
-            hipaa_security.log_security_event('LOGIN_SUCCESS', f"User {username} logged in successfully")
+            # Check for MFA
+            with hipaa_security._get_db_connection() as conn:
+                result = conn.execute(
+                    'SELECT mfa_secret FROM users WHERE user_id = %s',
+                    (user['user_id'],)
+                ).fetchone()
+                
+            if result and result['mfa_secret']:
+                session['mfa_pending'] = user['user_id']
+                return redirect(url_for('mfa_verify'))
             
+            hipaa_security.clear_failed_attempts(username)
+            hipaa_security.log_security_event(
+                SecurityEvent.LOGIN_SUCCESS,
+                f"User {username} logged in successfully"
+            )
             return redirect(url_for('index'))
         else:
-            # Failed login
-            hipaa_security.log_security_event('LOGIN_FAILED', f"Failed login attempt for user {username}")
+            hipaa_security.record_failed_attempt(username)
+            hipaa_security.log_security_event(
+                SecurityEvent.LOGIN_FAILED,
+                f"Failed login attempt for user {username}",
+                'WARNING'
+            )
             flash('Invalid credentials', 'error')
     
     return render_template('login.html')
@@ -123,10 +154,78 @@ def login():
 def logout():
     """Secure logout with audit logging"""
     user_id = session.get('user_id')
-    hipaa_security.log_security_event('LOGOUT', f"User {user_id} logged out")
+    hipaa_security.log_security_event(
+        SecurityEvent.LOGOUT,
+        f"User {user_id} logged out"
+    )
     session.clear()
     flash('You have been logged out successfully.', 'info')
     return redirect(url_for('login'))
+
+@app.route('/mfa_verify', methods=['GET', 'POST'])
+def mfa_verify():
+    """Verify MFA TOTP code"""
+    if 'mfa_pending' not in session:
+        return redirect(url_for('login'))
+    
+    if request.method == 'POST':
+        code = request.form.get('mfa_code')
+        user_id = session['mfa_pending']
+        if hipaa_security.verify_mfa(user_id, code):
+            session.pop('mfa_pending')
+            hipaa_security.log_security_event(
+                SecurityEvent.MFA_VERIFIED,
+                f"MFA verification successful for user {user_id}"
+            )
+            return redirect(url_for('index'))
+        else:
+            flash('Invalid MFA code', 'error')
+            hipaa_security.log_security_event(
+                SecurityEvent.MFA_FAILED,
+                f"MFA verification failed for user {user_id}",
+                'WARNING'
+            )
+    
+    return render_template('mfa_verify.html')
+
+@app.route('/mfa_setup', methods=['GET', 'POST'])
+@hipaa_security.require_authentication
+def mfa_setup():
+    """Setup MFA for the current user"""
+    user_id = session['user_id']
+    if request.method == 'POST':
+        secret = hipaa_security.enable_mfa(user_id)
+        if secret:
+            # Generate QR code for TOTP app
+            totp = pyotp.TOTP(secret)
+            qr_uri = totp.provisioning_uri(user_id, issuer_name="HIPAA Training System")
+            qr = qrcode.make(qr_uri)
+            buffered = io.BytesIO()
+            qr.save(buffered)
+            qr_code = base64.b64encode(buffered.getvalue()).decode('utf-8')
+            return render_template('mfa_setup.html', qr_code=qr_code, secret=secret)
+        else:
+            flash('Failed to enable MFA', 'error')
+    
+    return render_template('mfa_setup.html')
+
+@app.route('/api/csrf_token')
+@hipaa_security.require_authentication
+def get_csrf_token():
+    """Generate and return a CSRF token"""
+    token = hipaa_security.generate_csrf_token()
+    return jsonify({'csrf_token': token})
+
+@app.route('/api/extend_session', methods=['POST'])
+@hipaa_security.require_authentication
+def extend_session():
+    """Extend the user session"""
+    session['last_activity'] = datetime.now().isoformat()
+    hipaa_security.log_security_event(
+        SecurityEvent.SESSION_EXTENDED,
+        f"User {session['user_id']} extended session"
+    )
+    return jsonify({'success': True})
 
 @app.route('/lessons')
 @hipaa_security.require_authentication
@@ -139,17 +238,19 @@ def lessons():
                          user_role=session.get('user_role'))
 
 @app.route('/api/complete_lesson', methods=['POST'])
+@limiter.limit("10 per minute")
 @hipaa_security.require_authentication
 def complete_lesson():
     """Mark lesson as complete"""
     lesson_name = request.json.get('lesson_name')
     user_id = session['user_id']
     
-    # Update progress in database
     update_user_progress(user_id, 'lessons_completed', lesson_name)
     
-    hipaa_security.log_security_event('LESSON_COMPLETED', 
-                                    f"User {user_id} completed lesson: {lesson_name}")
+    hipaa_security.log_security_event(
+        SecurityEvent.LESSON_COMPLETED,
+        f"User {user_id} completed lesson: {lesson_name}"
+    )
     
     return jsonify({'success': True})
 
@@ -163,13 +264,13 @@ def quiz():
                          progress=user_progress)
 
 @app.route('/api/submit_quiz', methods=['POST'])
+@limiter.limit("5 per minute")
 @hipaa_security.require_authentication
 def submit_quiz():
     """Submit and grade quiz"""
     user_answers = request.json.get('answers', {})
     user_id = session['user_id']
     
-    # Calculate score
     correct = 0
     for question in QUIZ_QUESTIONS:
         user_answer = user_answers.get(str(question['id']))
@@ -178,12 +279,13 @@ def submit_quiz():
     
     score = (correct / len(QUIZ_QUESTIONS)) * 100
     
-    # Update user progress
     update_user_progress(user_id, 'quiz_score', score)
     update_user_progress(user_id, 'quiz_taken', True)
     
-    hipaa_security.log_security_event('QUIZ_COMPLETED', 
-                                    f"User {user_id} completed quiz with score: {score}%")
+    hipaa_security.log_security_event(
+        SecurityEvent.QUIZ_COMPLETED,
+        f"User {user_id} completed quiz with score: {score}%"
+    )
     
     return jsonify({
         'score': score,
@@ -202,6 +304,7 @@ def checklist():
                          progress=user_progress)
 
 @app.route('/api/update_checklist', methods=['POST'])
+@limiter.limit("10 per minute")
 @hipaa_security.require_authentication
 def update_checklist():
     """Update checklist item"""
@@ -211,8 +314,10 @@ def update_checklist():
     
     update_user_progress(user_id, f'checklist_{item_id}', completed)
     
-    hipaa_security.log_security_event('CHECKLIST_UPDATED',
-                                    f"User {user_id} updated checklist item {item_id} to {completed}")
+    hipaa_security.log_security_event(
+        SecurityEvent.CHECKLIST_UPDATED,
+        f"User {user_id} updated checklist item {item_id} to {completed}"
+    )
     
     return jsonify({'success': True})
 
@@ -224,6 +329,11 @@ def certificate():
     
     if not user_progress.get('quiz_taken') or user_progress.get('quiz_score', 0) < 80:
         flash('You must pass the quiz with 80% or higher to generate a certificate.', 'warning')
+        hipaa_security.log_security_event(
+            SecurityEvent.UNAUTHORIZED_ROLE_ACCESS,
+            f"User {session['user_id']} attempted to access certificate without passing quiz",
+            'WARNING'
+        )
         return redirect(url_for('quiz'))
     
     return render_template('certificate.html',
@@ -232,6 +342,13 @@ def certificate():
                          user_role=session.get('user_role'),
                          date=datetime.now().strftime('%B %d, %Y'))
 
+@app.route('/admin/audit_logs')
+@hipaa_security.require_role('Admin')
+def admin_audit_logs():
+    """Admin dashboard for viewing audit logs"""
+    logs = hipaa_security.get_audit_logs(days=30)
+    return render_template('admin_audit_logs.html', logs=logs)
+
 @app.route('/api/progress')
 @hipaa_security.require_authentication
 def get_progress_api():
@@ -239,23 +356,71 @@ def get_progress_api():
     user_progress = get_user_progress(session['user_id'])
     return jsonify(user_progress)
 
-# Helper functions (replace with database calls in production)
 def get_user_progress(user_id):
-    """Get user progress - replace with database in production"""
-    # Mock data - in production, fetch from database
-    return {
-        'lessons_completed': ['Privacy Rule Basics'],
-        'quiz_score': 0,
-        'quiz_taken': False,
-        'checklist_1': True,
-        'checklist_2': False,
-        # ... other progress items
-    }
+    """Get user progress from cache or database
+    
+    Args:
+        user_id (str): The user ID to fetch progress for
+        
+    Returns:
+        dict: User progress data
+    """
+    cached = redis_client.get(f'progress:{user_id}')
+    if cached:
+        return json.loads(cached)
+    
+    with hipaa_security._get_db_connection() as conn:
+        progress = conn.execute('''
+            SELECT lesson_id, completed, quiz_score, quiz_taken, checklist_item_id, checklist_completed
+            FROM progress WHERE user_id = %s
+        ''', (user_id,)).fetchall()
+        result = {'lessons_completed': [], 'quiz_score': 0, 'quiz_taken': False}
+        for p in progress:
+            if p['completed']:
+                result['lessons_completed'].append(p['lesson_id'])
+            if p['quiz_taken']:
+                result['quiz_score'] = p['quiz_score']
+                result['quiz_taken'] = True
+            if p['checklist_completed']:
+                result[f'checklist_{p["checklist_item_id"]}'] = True
+    
+    redis_client.setex(f'progress:{user_id}', 3600, json.dumps(result))
+    return result
 
 def update_user_progress(user_id, key, value):
-    """Update user progress - replace with database in production"""
-    # Mock update - in production, update database
-    print(f"Updating {user_id}: {key} = {value}")
+    """Update user progress in database and cache
+    
+    Args:
+        user_id (str): The user ID to update
+        key (str): The progress key to update
+        value: The value to set
+        
+    Returns:
+        bool: True if update succeeded
+    """
+    with hipaa_security._get_db_connection() as conn:
+        if key == 'lessons_completed':
+            conn.execute('''
+                INSERT INTO progress (user_id, lesson_id, completed, updated_at)
+                VALUES (%s, %s, %s, NOW())
+                ON CONFLICT (user_id, lesson_id) UPDATE SET completed = %s, updated_at = NOW()
+            ''', (user_id, value, True, True))
+        elif key == 'quiz_score':
+            conn.execute('''
+                INSERT INTO progress (user_id, quiz_score, quiz_taken, updated_at)
+                VALUES (%s, %s, %s, NOW())
+                ON CONFLICT (user_id, lesson_id) UPDATE SET quiz_score = %s, quiz_taken = %s, updated_at = NOW()
+            ''', (user_id, value, True, value, True))
+        elif key.startswith('checklist_'):
+            item_id = key.split('_')[1]
+            conn.execute('''
+                INSERT INTO progress (user_id, checklist_item_id, checklist_completed, updated_at)
+                VALUES (%s, %s, %s, NOW())
+                ON CONFLICT (user_id, checklist_item_id) UPDATE SET checklist_completed = %s, updated_at = NOW()
+            ''', (user_id, item_id, value, value))
+    
+    # Update cache
+    redis_client.delete(f'progress:{user_id}')
     return True
 
 if __name__ == '__main__':
