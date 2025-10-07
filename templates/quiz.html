@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Quiz - HIPAA Training System{% endblock %}
+{% block content %}
+    <header class="header" role="banner">
+        <div class="user-context">
+            <span class="user-role" aria-label="User role: {{ user_role }}">{{ user_role }}</span>
+            <span>{{ facility }}</span>
+        </div>
+        <h1>🎯 HIPAA Knowledge Quiz</h1>
+        <div class="subtitle">Test Your Understanding</div>
+    </header>
+
+    <section class="quiz-container" aria-label="HIPAA Quiz">
+        <form id="quizForm" method="POST" action="{{ url_for('submit_quiz') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            {% for question in questions %}
+                <div class="question" aria-labelledby="q{{ question.id }}-label">
+                    <h3 id="q{{ question.id }}-label">{{ question.question }}</h3>
+                    {% for option in question.options %}
+                        <div class="option">
+                            <input type="radio"
+                                   name="answer_{{ question.id }}"
+                                   value="{{ option[0] }}"
+                                   id="q{{ question.id }}_{{ option[0] }}"
+                                   required
+                                   aria-required="true">
+                            <label for="q{{ question.id }}_{{ option[0] }}">{{ option }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn quiz-btn">Submit Quiz</button>
+        </form>
+    </section>
+
+    <style>
+        .quiz-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .option {
+            margin: 10px 0;
+        }
+        .option input {
+            margin-right: 10px;
+        }
+    </style>
+
+    <script>
+        document.getElementById('quizForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const answers = {};
+            formData.forEach((value, key) => {
+                if (key.startsWith('answer_')) {
+                    answers[key.replace('answer_', '')] = value;
+                }
+            });
+
+            try {
+                const response = await fetch('/api/submit_quiz', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({ answers })
+                });
+                const result = await response.json();
+                if (result.passed) {
+                    window.location.href = '/certificate';
+                } else {
+                    alert(`Your score: ${result.score}%. You need 80% or higher to pass.`);
+                }
+            } catch (error) {
+                console.error('Quiz submission error:', error);
+                alert('An error occurred while submitting the quiz.');
+            }
+        });
+    </script>
+{% endblock %}
