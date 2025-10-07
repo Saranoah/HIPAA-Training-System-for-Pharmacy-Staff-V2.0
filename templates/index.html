@@ -49,12 +49,6 @@
             font-size: 2.5em;
         }
         
-        .header .subtitle {
-            color: var(--secondary-color);
-            font-size: 1.2em;
-            margin-bottom: 20px;
-        }
-        
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -68,30 +62,18 @@
             padding: 20px;
             text-align: center;
             box-shadow: var(--shadow);
-            transition: transform 0.3s ease;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
         }
         
         .stat-number {
             font-size: 2.5em;
             font-weight: bold;
             color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-        
-        .stat-label {
-            color: var(--dark-color);
-            font-size: 0.9em;
         }
         
         .modules-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 25px;
-            margin-bottom: 30px;
         }
         
         .module-card {
@@ -99,14 +81,12 @@
             border-radius: 15px;
             padding: 30px;
             box-shadow: var(--shadow);
-            transition: all 0.3s ease;
             cursor: pointer;
-            border: 3px solid transparent;
+            transition: all 0.3s ease;
         }
         
         .module-card:hover {
             transform: translateY(-5px);
-            border-color: var(--primary-color);
         }
         
         .module-icon {
@@ -114,256 +94,103 @@
             margin-bottom: 15px;
         }
         
-        .module-title {
-            font-size: 1.5em;
-            color: var(--dark-color);
-            margin-bottom: 10px;
-        }
-        
-        .module-description {
-            color: #666;
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-        
-        .module-progress {
+        .progress-bar {
             background: var(--light-color);
             border-radius: 10px;
             height: 8px;
-            margin-bottom: 15px;
-            overflow: hidden;
+            margin: 15px 0;
         }
         
-        .progress-bar {
+        .progress-fill {
             height: 100%;
             background: var(--primary-color);
-            transition: width 0.3s ease;
+            border-radius: 10px;
         }
         
-        .module-stats {
-            display: flex;
-            justify-content: space-between;
-            color: #666;
-            font-size: 0.9em;
-        }
-        
-        .start-btn {
-            background: var(--primary-color);
-            color: white;
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
             border: none;
-            padding: 12px 30px;
             border-radius: 25px;
             font-size: 1em;
             cursor: pointer;
-            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
             margin-top: 10px;
-            width: 100%;
         }
         
-        .start-btn:hover {
-            background: #45a049;
-            transform: scale(1.05);
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
         }
         
-        .quiz-btn {
-            background: var(--accent-color);
-        }
-        
-        .quiz-btn:hover {
-            background: #e68900;
-        }
-        
-        .checklist-btn {
+        .btn-secondary {
             background: var(--secondary-color);
-        }
-        
-        .checklist-btn:hover {
-            background: #1976D2;
-        }
-        
-        .certificate-section {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: var(--shadow);
-            text-align: center;
-            margin-top: 30px;
-        }
-        
-        .certificate-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            border: none;
-            padding: 15px 40px;
-            border-radius: 25px;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin: 10px;
-        }
-        
-        .certificate-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-        }
-        
-        .footer {
-            text-align: center;
-            color: white;
-            margin-top: 40px;
-            padding: 20px;
-        }
-        
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2em;
-            }
-            
-            .modules-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header Section -->
         <div class="header">
             <h1>🏥 HIPAA Training System V2.0</h1>
-            <div class="subtitle">Professional Training for Pharmacy Staff</div>
-            <p>Complete your HIPAA compliance training with our comprehensive learning system</p>
+            <p>Professional Training for Pharmacy Staff</p>
         </div>
         
-        <!-- Stats Overview -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-number">13</div>
-                <div class="stat-label">Comprehensive Lessons</div>
+                <div class="stat-number">{{ total_lessons }}</div>
+                <div>Comprehensive Lessons</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">15</div>
-                <div class="stat-label">Quiz Questions</div>
+                <div class="stat-number">{{ total_questions }}</div>
+                <div>Quiz Questions</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">15</div>
-                <div class="stat-label">Checklist Items</div>
+                <div class="stat-number">{{ total_checklist }}</div>
+                <div>Checklist Items</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number">95%</div>
-                <div class="stat-label">HIPAA Coverage</div>
+                <div>HIPAA Coverage</div>
             </div>
         </div>
         
-        <!-- Training Modules -->
         <div class="modules-grid">
-            <!-- Lessons Module -->
             <div class="module-card" onclick="window.location.href='/lessons'">
                 <div class="module-icon">📚</div>
-                <h3 class="module-title">HIPAA Lessons</h3>
-                <p class="module-description">
-                    Master 13 comprehensive topics covering Privacy Rule, Security Rule, 
-                    Breach Notification, Patient Rights, and more.
-                </p>
-                <div class="module-progress">
-                    <div class="progress-bar" style="width: 0%"></div>
+                <h3>HIPAA Lessons</h3>
+                <p>Master comprehensive topics covering Privacy Rule, Security Rule, and more.</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ lessons_progress }}%"></div>
                 </div>
-                <div class="module-stats">
-                    <span>0/13 Completed</span>
-                    <span>Beginner</span>
-                </div>
-                <button class="start-btn">Start Learning</button>
+                <div>{{ lessons_completed }}/{{ total_lessons }} Completed</div>
+                <button class="btn btn-primary">Start Learning</button>
             </div>
             
-            <!-- Quiz Module -->
             <div class="module-card" onclick="window.location.href='/quiz'">
                 <div class="module-icon">🎯</div>
-                <h3 class="module-title">Knowledge Quiz</h3>
-                <p class="module-description">
-                    Test your understanding with 15 scenario-based questions. 
-                    Pass with 80% or higher to earn your certificate.
-                </p>
-                <div class="module-progress">
-                    <div class="progress-bar" style="width: 0%"></div>
+                <h3>Knowledge Quiz</h3>
+                <p>Test your understanding with scenario-based questions.</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ quiz_progress }}%"></div>
                 </div>
-                <div class="module-stats">
-                    <span>Not Taken</span>
-                    <span>Intermediate</span>
-                </div>
-                <button class="start-btn quiz-btn">Take Quiz</button>
+                <div>Score: {{ quiz_progress|round|int }}%</div>
+                <button class="btn btn-secondary">Take Quiz</button>
             </div>
             
-            <!-- Checklist Module -->
             <div class="module-card" onclick="window.location.href='/checklist'">
                 <div class="module-icon">✅</div>
-                <h3 class="module-title">Compliance Checklist</h3>
-                <p class="module-description">
-                    Complete 15 essential compliance items across Training, 
-                    Technical, and Administrative safeguards.
-                </p>
-                <div class="module-progress">
-                    <div class="progress-bar" style="width: 0%"></div>
+                <h3>Compliance Checklist</h3>
+                <p>Complete essential compliance items across all safeguards.</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ checklist_progress }}%"></div>
                 </div>
-                <div class="module-stats">
-                    <span>0/15 Completed</span>
-                    <span>Advanced</span>
-                </div>
-                <button class="start-btn checklist-btn">Start Checklist</button>
+                <div>{{ checklist_completed }}/{{ total_checklist }} Completed</div>
+                <button class="btn btn-primary">Start Checklist</button>
             </div>
-        </div>
-        
-        <!-- Certificate Section -->
-        <div class="certificate-section">
-            <h2>🎉 Earn Your Certificate</h2>
-            <p>Complete all training modules and pass the quiz to generate your professional HIPAA training certificate.</p>
-            <div>
-                <button class="certificate-btn" onclick="window.location.href='/report'">View Progress Report</button>
-                <button class="certificate-btn" onclick="window.location.href='/certificate'">Generate Certificate</button>
-            </div>
-        </div>
-        
-        <!-- Footer -->
-        <div class="footer">
-            <p>HIPAA Training System V2.0 | Developed for Pharmacy Staff Compliance</p>
-            <p>© 2024 Professional Edition. All rights reserved.</p>
         </div>
     </div>
-
-    <script>
-        // Simple progress tracking (you'll want to integrate with your backend)
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check for existing progress in localStorage
-            const lessonProgress = localStorage.getItem('lessonProgress') || 0;
-            const quizTaken = localStorage.getItem('quizTaken') === 'true';
-            const quizScore = localStorage.getItem('quizScore') || 0;
-            const checklistProgress = localStorage.getItem('checklistProgress') || 0;
-            
-            // Update progress bars
-            updateProgressBars(lessonProgress, quizTaken, quizScore, checklistProgress);
-        });
-        
-        function updateProgressBars(lessonsCompleted, quizTaken, quizScore, checklistCompleted) {
-            // Lessons progress
-            const lessonProgress = (lessonsCompleted / 13) * 100;
-            document.querySelectorAll('.module-card')[0].querySelector('.progress-bar').style.width = `${lessonProgress}%`;
-            document.querySelectorAll('.module-card')[0].querySelector('.module-stats span').textContent = 
-                `${lessonsCompleted}/13 Completed`;
-            
-            // Quiz progress
-            const quizProgress = quizTaken ? (quizScore / 100) * 100 : 0;
-            document.querySelectorAll('.module-card')[1].querySelector('.progress-bar').style.width = `${quizProgress}%`;
-            document.querySelectorAll('.module-card')[1].querySelector('.module-stats span').textContent = 
-                quizTaken ? `Score: ${quizScore}%` : 'Not Taken';
-            
-            // Checklist progress
-            const checklistProgress = (checklistCompleted / 15) * 100;
-            document.querySelectorAll('.module-card')[2].querySelector('.progress-bar').style.width = `${checklistProgress}%`;
-            document.querySelectorAll('.module-card')[2].querySelector('.module-stats span').textContent = 
-                `${checklistCompleted}/15 Completed`;
-        }
-    </script>
 </body>
 </html>
