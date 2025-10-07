@@ -10,6 +10,7 @@ import csv
 from datetime import datetime
 from typing import Dict, List, Tuple
 
+from data import LESSONS, QUIZ_QUESTIONS, CHECKLIST_ITEMS
 # Constants
 PASS_THRESHOLD = 80
 GOOD_THRESHOLD = 60
