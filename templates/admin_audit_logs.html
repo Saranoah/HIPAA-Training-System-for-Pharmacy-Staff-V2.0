@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Audit Logs - HIPAA Training System{% endblock %}
+{% block content %}
+    <header class="header" role="banner">
+        <h1>📋 Audit Logs</h1>
+        <div class="subtitle">Security Event History</div>
+    </header>
+
+    <section class="audit-container" aria-label="Audit Logs">
+        <table class="audit-table">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Event Type</th>
+                    <th>User ID</th>
+                    <th>IP Address</th>
+                    <th>Details</th>
+                    <th>Severity</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                    <tr>
+                        <td>{{ log.timestamp }}</td>
+                        <td>{{ log.event_type }}</td>
+                        <td>{{ log.user_id }}</td>
+                        <td>{{ log.ip_address }}</td>
+                        <td>{{ log.details }}</td>
+                        <td>{{ log.severity }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <style>
+        .audit-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+        .audit-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .audit-table th, .audit-table td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+        .audit-table th {
+            background: var(--primary-color);
+            color: white;
+        }
+    </style>
+{% endblock %}
