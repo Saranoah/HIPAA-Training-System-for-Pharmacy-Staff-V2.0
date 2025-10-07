@@ -4,14 +4,16 @@ Unit tests for HIPAA Training System
 """
 
 import pytest
-from app import app, USERS, LESSONS, QUIZ_QUESTIONS, CHECKLIST_ITEMS
-from security_middleware import HIPAASecurity
+from src.web.app import app, USERS, LESSONS, QUIZ_QUESTIONS, CHECKLIST_ITEMS
+from src.web.security_middleware import HIPAASecurity
 import json
+from datetime import datetime, timedelta
+import pyotp
 
 @pytest.fixture
 def client():
     app.config['TESTING'] = True
-    app.config['HIPAA_SECURITY']['SESSION_TIMEOUT_MINUTES'] = 30
+    app.config['HIPAA_SECURITY']['SESSION_TIMEOUT_MINUTES'] = 15
     with app.test_client() as client:
         yield client
 
@@ -47,12 +49,25 @@ def test_brute_force_protection(client, hipaa_security):
     })
     assert b'Too many failed attempts' in response.data
 
+def test_index_page(client, hipaa_security):
+    with client.session_transaction() as sess:
+        sess['user_id'] = 'PHARMACIST_001'
+        sess['user_role'] = 'Pharmacist'
+        sess['facility'] = 'General Hospital Pharmacy'
+        sess['last_activity'] = datetime.now().isoformat()
+    
+    response = client.get('/')
+    assert response.status_code == 200
+    assert b'HIPAA Training System V2.0' in response.data
+    assert b'MFA Setup' in response.data
+    assert b'Logout' in response.data
+
 def test_session_timeout(client, hipaa_security):
     with client.session_transaction() as sess:
         sess['user_id'] = 'PHARMACIST_001'
         sess['user_role'] = 'Pharmacist'
         sess['facility'] = 'General Hospital Pharmacy'
-        sess['last_activity'] = (datetime.now() - timedelta(minutes=31)).isoformat()
+        sess['last_activity'] = (datetime.now() - timedelta(minutes=16)).isoformat()
     
     response = client.get('/')
     assert response.status_code == 302
