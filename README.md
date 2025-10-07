@@ -1,6 +1,6 @@
 # 🏥 HIPAA Training System for Pharmacy Staff (V2.0)
 
-A production-ready, interactive HIPAA compliance training and self-assessment system designed specifically for pharmacy staff.
+A production-ready web application for pharmacy staff to complete HIPAA compliance training, featuring lessons, quizzes, checklists, and certificate generation.
 
 ![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
@@ -11,6 +11,13 @@ A production-ready, interactive HIPAA compliance training and self-assessment sy
 
 ## 🌟 Features
 
+- **Secure Authentication**: Login with brute force protection and role-based access.
+- **Session Management**: 15-minute session timeout with user warnings.
+- **Audit Logging**: Persistent logs stored in PostgreSQL for 6 years.
+- **Dynamic Progress Tracking**: Real-time updates for lessons, quizzes, and checklists.
+- **Responsive Design**: Accessible on desktop and mobile with WCAG 2.1 compliance.
+- **Certificate Generation**: Issued upon passing the quiz with 80% or higher.
+- 
 ### 📚 13 Comprehensive Lessons (From 3 → 13)
 1. ✅ **What is PHI?** – NEW! Defines all 18 identifiers  
 2. ✅ **Privacy Rule** – Enhanced with more details  
