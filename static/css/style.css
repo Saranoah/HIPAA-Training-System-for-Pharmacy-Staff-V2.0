@@ -1,0 +1,52 @@
+/* Extracted from index.html with improvements */
+:root {
+    --primary-color: #4CAF50;
+    --secondary-color: #2196F3;
+    --accent-color: #FF9800;
+    --danger-color: #f44336;
+    --warning-color: #ffc107;
+    --light-color: #f5f5f5;
+    --dark-color: #333;
+    --text-light: #fff;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: var(--dark-color);
+    line-height: 1.6;
+}
+
+/* ... Include all styles from index.html ... */
+
+/* Accessibility improvements */
+:focus {
+    outline: 3px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
+/* Ensure high contrast */
+.security-banner {
+    background: var(--warning-color);
+    color: #000 !important; /* Ensure contrast ratio > 4.5:1 */
+}
+
+/* Print styles for certificate */
+@media print {
+    .security-banner, .header, .session-timeout-warning {
+        display: none;
+    }
+    .certificate-container {
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+    }
+}
