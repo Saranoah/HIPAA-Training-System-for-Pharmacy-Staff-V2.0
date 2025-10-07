@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Test Suite for HIPAA Training System V2.0
-Run with: python test_hipaa_training_v2.py
+Run with: python -m pytest tests/test_hipaa_training_v2.py -v
 """
 
 import unittest
@@ -15,7 +15,7 @@ import io
 if sys.platform == 'win32':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 # Import from main application
-from hipaa_training_v2 import (
+from src.cli.hipaa_training_v2 import (
     calculate_score,
     get_performance_feedback,
     LESSONS,
@@ -247,5 +247,5 @@ def run_all_tests():
 
 
 if __name__ == "__main__":
-    success = run_all_tests()
-    exit(0 if success else 1)
+    import pytest
+    pytest.main(["-v", __file__])
