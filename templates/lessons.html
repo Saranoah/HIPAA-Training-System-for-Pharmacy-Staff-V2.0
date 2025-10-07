@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Lessons - HIPAA Training System{% endblock %}
+{% block content %}
+    <header class="header" role="banner">
+        <div class="user-context">
+            <span class="user-role" aria-label="User role: {{ user_role }}">{{ user_role }}</span>
+            <span>{{ facility }}</span>
+        </div>
+        <h1>🏥 HIPAA Lessons</h1>
+        <div class="subtitle">Master HIPAA Compliance</div>
+    </header>
+
+    <section class="modules-grid" aria-label="Training lessons">
+        {% for lesson_name, lesson in lessons.items() %}
+            <article class="module-card {% if lesson_name in progress.lessons_completed %}completed{% endif %}"
+                     tabindex="0"
+                     role="button"
+                     aria-label="{{ lesson_name }} - {% if lesson_name in progress.lessons_completed %}Completed{% else %}Not completed{% endif %}"
+                     onclick="completeLesson('{{ lesson_name }}')"
+                     onkeypress="handleModuleKeypress(event, '{{ lesson_name }}')">
+                <div class="module-icon" aria-hidden="true">📚</div>
+                <h3 class="module-title">{{ lesson_name }}</h3>
+                <p class="module-description">{{ lesson.content }}</p>
+                <ul>
+                    {% for point in lesson.key_points %}
+                        <li>{{ point }}</li>
+                    {% endfor %}
+                </ul>
+                <div class="module-progress">
+                    <div class="progress-bar"
+                         role="progressbar"
+                         aria-valuenow="{% if lesson_name in progress.lessons_completed %}100{% else %}0{% endif %}"
+                         aria-valuemin="0"
+                         aria-valuemax="100"
+                         style="width: {% if lesson_name in progress.lessons_completed %}100%{% else %}0%{% endif %}"></div>
+                </div>
+                <button class="btn" onclick="event.stopPropagation(); completeLesson('{{ lesson_name }}')">
+                    {% if lesson_name in progress.lessons_completed %}
+                        Review Lesson
+                    {% else %}
+                        Complete Lesson
+                    {% endif %}
+                </button>
+            </article>
+        {% endfor %}
+    </section>
+{% endblock %}
