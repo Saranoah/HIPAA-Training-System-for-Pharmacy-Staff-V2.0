@@ -1,4 +1,4 @@
-# 🏥 HIPAA Training System for Pharmacy Staff (V2.0)
+# 🏥 HIPAA Training System for Pharmacy Staff (V3.0)
 
 A production-ready web application for pharmacy staff to complete HIPAA compliance training, featuring lessons, quizzes, checklists, and certificate generation.
 
