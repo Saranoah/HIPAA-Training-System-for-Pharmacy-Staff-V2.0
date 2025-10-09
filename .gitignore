@@ -1,3 +1,0 @@
-echo -e "data/*\n!data/.gitkeep" >> .gitignore
-mkdir data
-touch data/.gitkeep
