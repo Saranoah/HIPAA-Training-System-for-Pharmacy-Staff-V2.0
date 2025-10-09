@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hipaa-training-system"
+version = "3.0.0"
+description = "Enterprise HIPAA Compliance Training for Pharmacy Staff"
+authors = [
+    {name = "Your Name", email = "your.email@example.com"},
+]
+readme = "README.md"
+license = {text = "MIT"}
+keywords = ["hipaa", "compliance", "training", "pharmacy", "healthcare"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Healthcare Industry",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    "cryptography>=3.4.8",
+    "sqlalchemy>=1.4.23",
+    "python-dotenv>=0.19.0",
+    "python-dateutil>=2.8.2",
+    "psycopg2-binary>=2.9.3",
+    "colorama>=0.4.4",
+    "rich>=12.5.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-mock>=3.10.0",
+    "flake8>=6.0.0",
+    "bandit>=1.7.5",
+]
+
+[project.urls]
+Homepage = "https://github.com/your-username/hipaa-training-v3"
+Documentation = "https://github.com/your-username/hipaa-training-v3/docs"
+Repository = "https://github.com/your-username/hipaa-training-v3"
+"Issue Tracker" = "https://github.com/your-username/hipaa-training-v3/issues"
+
+[project.scripts]
+hipaa-training = "src.hipaa_training.cli:main"
