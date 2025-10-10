@@ -13,7 +13,7 @@ def create_project_structure():
     directories = [
         '.github/workflows',
         '.devcontainer',
-        'src/hipaa_training',
+        'hipaa_training',
         'tests',
         'content',
         'docs',
@@ -41,19 +41,32 @@ def main():
     # Create directory structure
     create_project_structure()
     
-    # Create all configuration files (content would be the actual file contents)
-    # This is where you'd add all the file creation calls
-    # create_file('.github/workflows/ci-cd.yml', CI_CD_CONTENT)
-    # create_file('.devcontainer/devcontainer.json', DEVCONTAINER_CONTENT)
-    # ... etc for all files
+    # Create essential files
+    create_file('.gitignore', '''__pycache__/
+*.pyc
+*.db
+*.log
+*.gz
+data/
+reports/
+certificates/
+evidence/
+.env
+''')
+    
+    create_file('.env.example', '''HIPAA_ENCRYPTION_KEY=your-secure-key-here-32-characters-minimum
+DB_URL=sqlite:///data/hipaa_training.db
+''')
     
     print("\n🎉 Project setup completed successfully!")
     print("\nNext steps:")
-    print("1. Review and customize the generated files")
-    print("2. Run: git init")
-    print("3. Run: git add .")
-    print("4. Run: git commit -m 'Initial commit: HIPAA Training System V3.0'")
-    print("5. Create GitHub repository and push")
+    print("1. Copy .env.example to .env and set secure values")
+    print("2. Run: pip install -r requirements.txt")
+    print("3. Run: git init")
+    print("4. Run: git add .")
+    print("5. Run: git commit -m 'Initial commit: HIPAA Training System V3.0'")
+    print("6. Create GitHub repository and push")
+    print("7. Run: python main.py")
 
 if __name__ == "__main__":
     main()
