@@ -3,12 +3,16 @@ import os
 
 
 class ContentManager:
-    """Manages loading and access to HIPAA training content from JSON files."""
+    """Manages loading and access to HIPAA training content from JSON."""
 
     def __init__(self):
         self.lessons = self._load_content("content/lessons.json")
-        self.quiz_questions = self._load_content("content/quiz_questions.json")
-        self.checklist_items = self._load_content("content/checklist_items.json")
+        self.quiz_questions = self._load_content(
+            "content/quiz_questions.json"
+        )
+        self.checklist_items = self._load_content(
+            "content/checklist_items.json"
+        )
 
     def _load_content(self, file_path: str):
         """Load content from JSON files with error handling."""
