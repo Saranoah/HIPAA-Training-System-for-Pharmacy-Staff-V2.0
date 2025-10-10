@@ -4,7 +4,10 @@ from contextlib import contextmanager
 
 
 class DatabaseManager:
-    """Manages database connections and schema with connection pooling."""
+    """
+    Manages database connections and schema with connection pooling.
+    Uses class variables to share connection across instances.
+    """
 
     connection = None
     db_path = "data/hipaa_training.db"
@@ -14,8 +17,9 @@ class DatabaseManager:
             self._init_db()
 
     def _init_db(self):
-        """Initialize database tables if they don't exist."""
+        """Initialize database tables if they don't exist"""
         os.makedirs("data", exist_ok=True)
+
         with self._get_connection() as conn:
             # Users table
             conn.execute('''
@@ -70,9 +74,11 @@ class DatabaseManager:
 
     @contextmanager
     def _get_connection(self):
-        """Database connection context manager."""
+        """Database connection context manager"""
         if DatabaseManager.connection is None:
-            DatabaseManager.connection = sqlite3.connect(self.db_path)
+            DatabaseManager.connection = sqlite3.connect(
+                self.db_path
+            )
             DatabaseManager.connection.row_factory = sqlite3.Row
 
         conn = DatabaseManager.connection
