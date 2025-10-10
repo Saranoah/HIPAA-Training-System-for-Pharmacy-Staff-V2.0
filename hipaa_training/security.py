@@ -112,4 +112,3 @@ class SecurityManager:
             text = re.sub(r"[^a-zA-Z0-9\.\-_@]", "", text)
 
         return text
-
