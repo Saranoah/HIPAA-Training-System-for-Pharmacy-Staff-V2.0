@@ -3,7 +3,10 @@ from datetime import datetime
 
 
 class EnhancedTrainingEngine:
-    """Core training logic with interactive lessons and quizzes."""
+    """
+    Core training logic with interactive lessons, quizzes,
+    and compliance tracking.
+    """
 
     def __init__(self):
         from .content_manager import ContentManager
@@ -15,8 +18,10 @@ class EnhancedTrainingEngine:
         self.security = SecurityManager()
         self.checklist = {}
 
-    def interactive_lesson(self, user_id: int, lesson_title: str) -> bool:
-        """Deliver interactive lesson with comprehension check."""
+    def interactive_lesson(
+        self, user_id: int, lesson_title: str
+    ) -> bool:
+        """Deliver interactive lesson with comprehension check"""
         lesson = self.content.lessons.get(lesson_title)
         if not lesson:
             return False
@@ -35,7 +40,9 @@ class EnhancedTrainingEngine:
         if self._mini_quiz(lesson):
             self._mark_lesson_complete(user_id, lesson_title)
             self.security.log_action(
-                user_id, "LESSON_COMPLETED", f"Lesson: {lesson_title}"
+                user_id,
+                "LESSON_COMPLETED",
+                f"Lesson: {lesson_title}"
             )
             return True
         else:
@@ -43,7 +50,7 @@ class EnhancedTrainingEngine:
             return False
 
     def _mini_quiz(self, lesson: dict) -> bool:
-        """Mini quiz after each lesson."""
+        """Mini quiz after each lesson"""
         questions = lesson.get('comprehension_questions', [])
         if not questions:
             return True
@@ -56,29 +63,40 @@ class EnhancedTrainingEngine:
 
             try:
                 answer = int(input("\nYour answer (1-4): ")) - 1
-                if (0 <= answer < len(q['options']) and
-                        answer == q['correct_index']):
+                is_correct = (
+                    0 <= answer < len(q['options']) and
+                    answer == q['correct_index']
+                )
+                if is_correct:
                     print("✅ Correct!")
                     correct_answers += 1
                 else:
-                    correct_option = q['options'][q['correct_index']]
-                    print(f"❌ Incorrect. The answer was: {correct_option}")
+                    correct_option = q['options'][
+                        q['correct_index']
+                    ]
+                    print(
+                        f"❌ Incorrect. The answer was: "
+                        f"{correct_option}"
+                    )
             except (ValueError, IndexError):
                 print("❌ Invalid input.")
 
         return correct_answers >= len(questions) * 0.7
 
-    def _mark_lesson_complete(self, user_id: int, lesson_title: str):
-        """Record lesson completion in database."""
+    def _mark_lesson_complete(
+        self, user_id: int, lesson_title: str
+    ):
+        """Record lesson completion in database"""
         with self.db._get_connection() as conn:
             conn.execute(
                 "INSERT INTO training_progress "
-                "(user_id, lesson_completed, completed_at) VALUES (?, ?, ?)",
+                "(user_id, lesson_completed, completed_at) "
+                "VALUES (?, ?, ?)",
                 (user_id, lesson_title, datetime.now())
             )
 
     def adaptive_quiz(self, user_id: int) -> float:
-        """Administer adaptive quiz with randomized questions."""
+        """Administer adaptive quiz with randomized questions"""
         questions = self.content.quiz_questions.copy()
 
         if not questions:
@@ -88,7 +106,11 @@ class EnhancedTrainingEngine:
         selected_questions = questions[:10]  # Use 10 questions
 
         score = 0
-        print(f"\n🧠 HIPAA KNOWLEDGE QUIZ ({len(selected_questions)} questions)")
+        num_questions = len(selected_questions)
+        print(
+            f"\n🧠 HIPAA KNOWLEDGE QUIZ "
+            f"({num_questions} questions)"
+        )
         print("=" * 60)
 
         for i, q in enumerate(selected_questions, 1):
@@ -105,7 +127,9 @@ class EnhancedTrainingEngine:
 
             answer = ""
             while answer not in ["A", "B", "C", "D"]:
-                answer = input("\nYour answer (A/B/C/D): ").strip().upper()
+                answer = input(
+                    "\nYour answer (A/B/C/D): "
+                ).strip().upper()
 
             user_answer_index = ord(answer) - ord('A')
             if user_answer_index == new_correct_index:
@@ -113,7 +137,10 @@ class EnhancedTrainingEngine:
                 score += 1
             else:
                 correct_letter = chr(65 + new_correct_index)
-                print(f"❌ Incorrect. Correct answer: {correct_letter}")
+                print(
+                    f"❌ Incorrect. Correct answer: "
+                    f"{correct_letter}"
+                )
                 print(f"Explanation: {q['explanation']}")
 
         percentage = (score / len(selected_questions)) * 100
@@ -125,10 +152,11 @@ class EnhancedTrainingEngine:
         return percentage
 
     def _save_quiz_results(self, user_id: int, score: float):
-        """Save quiz results to database."""
+        """Save quiz results to database"""
         with self.db._get_connection() as conn:
             conn.execute(
                 "INSERT INTO training_progress "
-                "(user_id, quiz_score, completed_at) VALUES (?, ?, ?)",
+                "(user_id, quiz_score, completed_at) "
+                "VALUES (?, ?, ?)",
                 (user_id, score, datetime.now())
             )
