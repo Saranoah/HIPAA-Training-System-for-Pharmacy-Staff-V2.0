@@ -24,9 +24,7 @@ class SecurityManager:
             ]
         )
 
-    def log_action(
-        self, user_id: int, action: str, details: str = ""
-    ):
+    def log_action(self, user_id: int, action: str, details: str = ""):
         """Enhanced audit logging for HIPAA compliance"""
         logging.info(f"USER_{user_id} - {action} - {details}")
 
@@ -61,3 +59,4 @@ class SecurityManager:
             text = re.sub(r'[^a-zA-Z0-9\.\-_@]', '', text)
 
         return text
+
