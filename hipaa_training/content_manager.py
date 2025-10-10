@@ -1,6 +1,7 @@
 import os
 import json
 
+
 class ContentManager:
     """Handles loading and management of training content such as lessons and quizzes."""
 
@@ -17,13 +18,19 @@ class ContentManager:
         if not os.path.exists(path):
             # Provide fallback content if file not found
             if "lesson" in filename:
-                return {"Sample Lesson": {"content": "Fallback", "key_points": [], "comprehension_questions": []}}
+                return {
+                    "Sample Lesson": {
+                        "content": "Fallback",
+                        "key_points": [],
+                        "comprehension_questions": []
+                    }
+                }
             elif "quiz" in filename:
                 return [{"question": "Sample question?", "answer": "Sample answer"}]
             elif "checklist" in filename:
                 return ["Sample checklist item"]
-            else:
-                return {}
+            return {}
 
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
+
