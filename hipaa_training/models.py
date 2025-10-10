@@ -1,6 +1,8 @@
 import sqlite3
 import os
 from contextlib import contextmanager
+
+
 class DatabaseManager:
     """
     Manages database connections and schema with connection pooling.
@@ -74,9 +76,7 @@ class DatabaseManager:
     def _get_connection(self):
         """Database connection context manager"""
         if DatabaseManager.connection is None:
-            DatabaseManager.connection = sqlite3.connect(
-                self.db_path
-            )
+            DatabaseManager.connection = sqlite3.connect(self.db_path)
             DatabaseManager.connection.row_factory = sqlite3.Row
 
         conn = DatabaseManager.connection
