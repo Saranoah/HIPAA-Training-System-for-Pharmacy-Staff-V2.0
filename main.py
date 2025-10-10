@@ -8,10 +8,11 @@ from hipaa_training.cli import CLI
 
 
 def setup_production_environment():
-    """Setup production directories and permissions."""
+    """Setup production directories and permissions"""
     # Create necessary directories
     directories = [
-        "content", "reports", "certificates", "evidence", "data", "logs"
+        "content", "reports", "certificates",
+        "evidence", "data", "logs"
     ]
     for directory in directories:
         os.makedirs(directory, exist_ok=True)
