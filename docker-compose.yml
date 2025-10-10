@@ -6,14 +6,14 @@ services:
     container_name: hipaa-training-v3
     environment:
       - HIPAA_ENCRYPTION_KEY=${HIPAA_ENCRYPTION_KEY}
-      - DB_URL=sqlite:///data/hipaa_training.db
+      - HIPAA_SALT=${HIPAA_SALT}
+      - DB_URL=${DB_URL:-sqlite:///data/hipaa_training.db}
     volumes:
       - ./data:/app/data
       - ./content:/app/content
       - ./reports:/app/reports
       - ./certificates:/app/certificates
-    ports:
-      - "8080:8080"
+      - ./evidence:/app/evidence
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "python", "-c", "import sqlite3; conn=sqlite3.connect('/app/data/hipaa_training.db'); conn.execute('SELECT 1'); conn.close()"]
@@ -23,6 +23,7 @@ services:
 
   postgres:
     image: postgres:13
+    container_name: hipaa-training-postgres
     environment:
       - POSTGRES_DB=hipaa_training
       - POSTGRES_USER=hipaa_user
@@ -32,6 +33,11 @@ services:
     ports:
       - "5432:5432"
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hipaa_user -d hipaa_training"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 volumes:
   postgres_data:
