@@ -17,11 +17,11 @@ class SecurityManager:
 
         logging.basicConfig(
             level=logging.INFO,
-            format='%(asctime)s - %(levelname)s - %(message)s',
+            format="%(asctime)s - %(levelname)s - %(message)s",
             handlers=[
-                logging.FileHandler('logs/hipaa_audit.log'),
-                logging.StreamHandler()
-            ]
+                logging.FileHandler("logs/hipaa_audit.log"),
+                logging.StreamHandler(),
+            ],
         )
 
     def log_action(self, user_id: int, action: str, details: str = ""):
@@ -35,14 +35,14 @@ class SecurityManager:
                 """INSERT INTO audit_log
                    (user_id, action, details)
                    VALUES (?, ?, ?)""",
-                (user_id, action, details)
+                (user_id, action, details),
             )
 
     def sanitize_input(
         self,
         text: str,
         max_length: int = 255,
-        allow_spaces: bool = True
+        allow_spaces: bool = True,
     ) -> str:
         """Sanitize user input to prevent injection attacks"""
         if not text:
@@ -54,9 +54,9 @@ class SecurityManager:
 
         # Allow only alphanumeric, spaces, and basic punctuation
         if allow_spaces:
-            text = re.sub(r'[^a-zA-Z0-9\s\.\-_,!@]', '', text)
+            text = re.sub(r"[^a-zA-Z0-9\s\.\-_,!@]", "", text)
         else:
-            text = re.sub(r'[^a-zA-Z0-9\.\-_@]', '', text)
+            text = re.sub(r"[^a-zA-Z0-9\.\-_@]", "", text)
 
         return text
 
