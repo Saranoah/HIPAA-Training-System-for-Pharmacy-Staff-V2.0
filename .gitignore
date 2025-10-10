@@ -17,8 +17,8 @@ env/
 venv/
 
 # Database
-*.db
-*.sqlite3
+data/*.db
+data/*.sqlite3
 
 # Logs
 *.log
@@ -38,5 +38,7 @@ backup/
 *.tmp
 *.temp
 
-# Evidence files (HIPAA sensitive)
+# Evidence and report files (HIPAA sensitive)
 evidence/
+reports/
+certificates/
