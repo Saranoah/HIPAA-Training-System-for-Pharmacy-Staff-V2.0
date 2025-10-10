@@ -29,13 +29,6 @@ class SecurityManager:
         self, user_id: int, action: str, details: str = ""
     ):
         """Enhanced audit logging for HIPAA compliance"""
-        log_entry = {
-            'user_id': user_id,
-            'action': action,
-            'details': details,
-            'timestamp': datetime.now().isoformat()
-        }
-
         logging.info(f"USER_{user_id} - {action} - {details}")
 
         # Store in database
