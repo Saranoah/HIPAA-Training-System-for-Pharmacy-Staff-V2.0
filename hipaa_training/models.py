@@ -8,7 +8,6 @@ class DatabaseManager:
     Manages database connections and schema with connection pooling.
     Uses class variables to share connection across instances.
     """
-
     connection = None
     db_path = "data/hipaa_training.db"
 
