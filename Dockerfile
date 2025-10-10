@@ -1,4 +1,4 @@
-FROM python:3.11-slim-bullseye
+FROM python:3.9-slim-bullseye
 
 WORKDIR /app
 
@@ -10,6 +10,6 @@ COPY . .
 RUN useradd --create-home --shell /bin/bash app
 USER app
 
-VOLUME ["/app/data", "/app/content", "/app/reports", "/app/certificates"]
+VOLUME ["/app/data", "/app/content", "/app/reports", "/app/certificates", "/app/evidence"]
 
-CMD ["python", "-m", "src.hipaa_training.cli"]
+CMD ["python", "main.py"]
