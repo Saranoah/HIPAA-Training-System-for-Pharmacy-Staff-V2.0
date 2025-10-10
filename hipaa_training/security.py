@@ -5,14 +5,17 @@ from datetime import datetime
 
 
 class SecurityManager:
-    """Handles security, auditing, and input validation for HIPAA."""
+    """
+    Handles security, auditing, and input validation for HIPAA.
+    """
 
     def __init__(self):
         self.setup_logging()
 
     def setup_logging(self):
-        """Setup HIPAA-compliant audit logging."""
+        """Setup HIPAA-compliant audit logging"""
         os.makedirs("logs", exist_ok=True)
+
         logging.basicConfig(
             level=logging.INFO,
             format='%(asctime)s - %(levelname)s - %(message)s',
@@ -22,22 +25,26 @@ class SecurityManager:
             ]
         )
 
-    def log_action(self, user_id: int, action: str, details: str = ""):
-        """Enhanced audit logging for HIPAA compliance."""
+    def log_action(
+        self, user_id: int, action: str, details: str = ""
+    ):
+        """Enhanced audit logging for HIPAA compliance"""
         log_entry = {
             'user_id': user_id,
             'action': action,
             'details': details,
             'timestamp': datetime.now().isoformat()
         }
+
         logging.info(f"USER_{user_id} - {action} - {details}")
 
         # Store in database
         from .models import DatabaseManager
         with DatabaseManager()._get_connection() as conn:
             conn.execute(
-                "INSERT INTO audit_log (user_id, action, details) "
-                "VALUES (?, ?, ?)",
+                """INSERT INTO audit_log
+                   (user_id, action, details)
+                   VALUES (?, ?, ?)""",
                 (user_id, action, details)
             )
 
@@ -47,12 +54,11 @@ class SecurityManager:
         max_length: int = 255,
         allow_spaces: bool = True
     ) -> str:
-        """Sanitize user input to prevent injection attacks."""
+        """Sanitize user input to prevent injection attacks"""
         if not text:
             return text
 
         text = str(text).strip()
-
         if len(text) > max_length:
             text = text[:max_length]
 
