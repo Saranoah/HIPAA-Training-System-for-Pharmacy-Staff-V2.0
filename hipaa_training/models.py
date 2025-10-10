@@ -1,8 +1,6 @@
 import sqlite3
 import os
 from contextlib import contextmanager
-
-
 class DatabaseManager:
     """
     Manages database connections and schema with connection pooling.
