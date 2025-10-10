@@ -17,20 +17,23 @@ classifiers = [
     "Intended Audience :: Healthcare Industry",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
 ]
-
 dependencies = [
     "cryptography>=3.4.8",
     "sqlalchemy>=1.4.23",
+    "alembic>=1.7.1",
     "python-dotenv>=0.19.0",
     "python-dateutil>=2.8.2",
     "psycopg2-binary>=2.9.3",
     "colorama>=0.4.4",
     "rich>=12.5.1",
+    "pyttsx3>=2.90; sys_platform != 'linux'",
+    "speechrecognition>=3.8.1",
+    "fastapi>=0.68.0",
+    "uvicorn>=0.15.0",
 ]
 
 [project.optional-dependencies]
@@ -43,10 +46,10 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/your-username/hipaa-training-v3"
-Documentation = "https://github.com/your-username/hipaa-training-v3/docs"
-Repository = "https://github.com/your-username/hipaa-training-v3"
-"Issue Tracker" = "https://github.com/your-username/hipaa-training-v3/issues"
+Homepage = "https://github.com/your-org/hipaa-training-v3"
+Documentation = "https://github.com/your-org/hipaa-training-v3/tree/main/docs"
+Repository = "https://github.com/your-org/hipaa-training-v3"
+"Issue Tracker" = "https://github.com/your-org/hipaa-training-v3/issues"
 
 [project.scripts]
-hipaa-training = "src.hipaa_training.cli:main"
+hipaa-training = "hipaa_training.cli:main"
