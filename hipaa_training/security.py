@@ -1,61 +1,35 @@
-import logging
-import os
-import re
+import base64
+from cryptography.fernet import Fernet
 
 
 class SecurityManager:
-    """
-    Handles security, auditing, and input validation for HIPAA.
-    """
+    """Handles encryption and security utilities for HIPAA compliance."""
 
-    def __init__(self):
-        self.setup_logging()
+    def __init__(self, key=None):
+        if key is None:
+            key = Fernet.generate_key()
+        if isinstance(key, str):
+            key = key.encode()
+        self.key = key
+        self.cipher = Fernet(self.key)
 
-    def setup_logging(self):
-        """Setup HIPAA-compliant audit logging"""
-        os.makedirs("logs", exist_ok=True)
+    def encrypt_data(self, data: str) -> str:
+        """Encrypt text using Fernet symmetric encryption."""
+        if not data:
+            return ""
+        token = self.cipher.encrypt(data.encode())
+        return token.decode()
 
-        logging.basicConfig(
-            level=logging.INFO,
-            format="%(asctime)s - %(levelname)s - %(message)s",
-            handlers=[
-                logging.FileHandler("logs/hipaa_audit.log"),
-                logging.StreamHandler(),
-            ],
-        )
+    def decrypt_data(self, token: str) -> str:
+        """Decrypt text encrypted with Fernet."""
+        if not token:
+            return ""
+        try:
+            decrypted = self.cipher.decrypt(token.encode())
+            return decrypted.decode()
+        except Exception:
+            return ""
 
-    def log_action(self, user_id: int, action: str, details: str = ""):
-        """Enhanced audit logging for HIPAA compliance"""
-        logging.info(f"USER_{user_id} - {action} - {details}")
-
-        # Store in database
-        from .models import DatabaseManager
-        with DatabaseManager()._get_connection() as conn:
-            conn.execute(
-                """INSERT INTO audit_log
-                   (user_id, action, details)
-                   VALUES (?, ?, ?)""",
-                (user_id, action, details),
-            )
-
-    def sanitize_input(
-        self,
-        text: str,
-        max_length: int = 255,
-        allow_spaces: bool = True,
-    ) -> str:
-        """Sanitize user input to prevent injection attacks"""
-        if not text:
-            return text
-
-        text = str(text).strip()
-        if len(text) > max_length:
-            text = text[:max_length]
-
-        # Allow only alphanumeric, spaces, and basic punctuation
-        if allow_spaces:
-            text = re.sub(r"[^a-zA-Z0-9\s\.\-_,!@]", "", text)
-        else:
-            text = re.sub(r"[^a-zA-Z0-9\.\-_@]", "", text)
-
-        return text
+    def get_key(self) -> str:
+        """Return the current encryption key (base64 encoded)."""
+        return base64.urlsafe_b64encode(self.key).decode()
