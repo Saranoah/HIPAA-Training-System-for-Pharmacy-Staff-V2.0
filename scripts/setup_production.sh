@@ -33,14 +33,14 @@ pip install -r requirements.txt
 if [[ -z "$HIPAA_ENCRYPTION_KEY" ]]; then
     echo "🔑 Generating encryption key..."
     export HIPAA_ENCRYPTION_KEY=$(python3 -c "import secrets; print(secrets.token_urlsafe(32))")
-    echo "⚠️  IMPORTANT: Add to your environment:"
-    echo "export HIPAA_ENCRYPTION_KEY=\"$HIPAA_ENCRYPTION_KEY\""
+    echo "⚠️  IMPORTANT: Add to your .env or environment:"
+    echo "HIPAA_ENCRYPTION_KEY=\"$HIPAA_ENCRYPTION_KEY\""
 fi
 
 # Generate random salt
-if [[ -z "$HIPAA_ENCRYPTION_SALT" ]]; then
-    export HIPAA_ENCRYPTION_SALT=$(python3 -c "import secrets; print(secrets.token_hex(16))")
-    echo "export HIPAA_ENCRYPTION_SALT=\"$HIPAA_ENCRYPTION_SALT\""
+if [[ -z "$HIPAA_SALT" ]]; then
+    export HIPAA_SALT=$(python3 -c "import secrets; print(secrets.token_hex(16))")
+    echo "HIPAA_SALT=\"$HIPAA_SALT\""
 fi
 
 # Set secure permissions
@@ -51,7 +51,7 @@ chmod 600 .env 2>/dev/null || true
 # Initialize database
 echo "🗄️  Initializing database..."
 python3 -c "
-from hipaa_system_v3 import DatabaseManager
+from hipaa_training.models import DatabaseManager
 db = DatabaseManager()
 print('✓ Database initialized successfully')
 "
@@ -60,11 +60,12 @@ echo ""
 echo "🎉 Setup completed successfully!"
 echo ""
 echo "Next steps:"
-echo "1. Review content/ files for your organization"
-echo "2. Run: python3 hipaa_system_v3.py"
-echo "3. Access the system and create admin users"
+echo "1. Copy .env.example to .env and set secure values"
+echo "2. Review content/ files for your organization"
+echo "3. Run: python main.py"
+echo "4. Access the system and create admin users"
 echo ""
 echo "For production:"
-echo "- Set HIPAA_ENCRYPTION_KEY in your environment"
-echo "- Configure regular backups"
-echo "- Monitor audit logs"
+echo "- Set HIPAA_ENCRYPTION_KEY and HIPAA_SALT in .env"
+echo "- Configure regular backups (scripts/backup_database.sh)"
+echo "- Monitor audit logs (hipaa_audit.log)"
