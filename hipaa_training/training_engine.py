@@ -1,168 +1,134 @@
-# hipaa_training/training_engine.py
-import os
-import json
 import random
-import shutil
-from typing import Dict, Optional
 from datetime import datetime
-from rich.console import Console
-from .models import Config, DatabaseManager
-from .security import SecurityManager
-from .content_manager import ContentManager
+
 
 class EnhancedTrainingEngine:
+    """Core training logic with interactive lessons and quizzes."""
+
     def __init__(self):
-        self.console = Console()
-        self.config = Config()
+        from .content_manager import ContentManager
+        from .models import DatabaseManager
+        from .security import SecurityManager
+
+        self.content = ContentManager()
         self.db = DatabaseManager()
         self.security = SecurityManager()
-        self.content = ContentManager()
         self.checklist = {}
 
-    def display_lesson(self, user_id: int, lesson_title: str):
-        """Display a lesson and its key points"""
+    def interactive_lesson(self, user_id: int, lesson_title: str) -> bool:
+        """Deliver interactive lesson with comprehension check."""
         lesson = self.content.lessons.get(lesson_title)
         if not lesson:
-            self.console.print(f"[red]Lesson '{lesson_title}' not found.[/red]")
-            return
-        
-        self.console.print(f"\n[bold cyan]Lesson: {lesson_title}[/bold cyan]")
-        self.console.print(lesson['content'])
-        self.console.print("\n[bold]Key Points:[/bold]")
-        for point in lesson['key_points']:
-            self.console.print(f"  - {point}")
-        self.security.log_action(user_id, "LESSON_VIEWED", f"Lesson: {lesson_title}")
-        input("\nPress Enter to continue...")
+            return False
 
-    def _mini_quiz(self, lesson: Dict) -> bool:
-        """Conduct a mini-quiz for a lesson"""
+        print(f"\n🎓 LESSON: {lesson_title}")
+        print("=" * 60)
+        print(lesson['content'])
+
+        # Display key points
+        if 'key_points' in lesson:
+            print("\nKey Points:")
+            for point in lesson['key_points']:
+                print(f"  • {point}")
+
+        # Comprehension check
+        if self._mini_quiz(lesson):
+            self._mark_lesson_complete(user_id, lesson_title)
+            self.security.log_action(
+                user_id, "LESSON_COMPLETED", f"Lesson: {lesson_title}"
+            )
+            return True
+        else:
+            print("\n❌ Please review the lesson and try again.")
+            return False
+
+    def _mini_quiz(self, lesson: dict) -> bool:
+        """Mini quiz after each lesson."""
         questions = lesson.get('comprehension_questions', [])
         if not questions:
             return True
-        
-        correct = 0
-        total = len(questions)
-        for q in questions:
-            self.console.print(f"\n[bold]Question: {q['question']}[/bold]")
-            options = q['options']
-            random.shuffle(options)
-            correct_answer = options.index(q['options'][q['correct_index']])
-            
-            for i, option in enumerate(options, 1):
-                self.console.print(f"{i}. {option}")
-            
-            while True:
-                answer = input("Enter your answer (1-4): ").strip()
-                if answer in ['1', '2', '3', '4']:
-                    break
-                self.console.print("[red]Invalid input. Enter a number 1-4.[/red]")
-            
-            if int(answer) - 1 == correct_answer:
-                self.console.print("[green]Correct![/green]")
-                correct += 1
-            else:
-                self.console.print(f"[red]Incorrect.[/red] Correct answer: {q['options'][q['correct_index']]}")
-        
-        score = (correct / total) * 100
-        self.console.print(f"Score: {score}%")
-        return score >= 70  # Configurable threshold
+
+        correct_answers = 0
+        for i, q in enumerate(questions, 1):
+            print(f"\nQ{i}: {q['question']}")
+            for j, option in enumerate(q['options'], 1):
+                print(f"  {j}. {option}")
+
+            try:
+                answer = int(input("\nYour answer (1-4): ")) - 1
+                if (0 <= answer < len(q['options']) and
+                        answer == q['correct_index']):
+                    print("✅ Correct!")
+                    correct_answers += 1
+                else:
+                    correct_option = q['options'][q['correct_index']]
+                    print(f"❌ Incorrect. The answer was: {correct_option}")
+            except (ValueError, IndexError):
+                print("❌ Invalid input.")
+
+        return correct_answers >= len(questions) * 0.7
+
+    def _mark_lesson_complete(self, user_id: int, lesson_title: str):
+        """Record lesson completion in database."""
+        with self.db._get_connection() as conn:
+            conn.execute(
+                "INSERT INTO training_progress "
+                "(user_id, lesson_completed, completed_at) VALUES (?, ?, ?)",
+                (user_id, lesson_title, datetime.now())
+            )
 
     def adaptive_quiz(self, user_id: int) -> float:
-        """Conduct an adaptive quiz with randomized questions"""
-        questions = random.sample(self.content.quiz_questions, min(10, len(self.content.quiz_questions)))
-        correct = 0
-        answers = {}
-        
-        for q in questions:
-            self.console.print(f"\n[bold]Question: {q['question']}[/bold]")
-            options = q['options']
-            random.shuffle(options)
-            correct_answer = options.index(q['options'][q['correct_index']])
-            
-            for i, option in enumerate(options, 1):
-                self.console.print(f"{i}. {option}")
-            
-            while True:
-                answer = input("Enter your answer (1-4): ").strip()
-                if answer in ['1', '2', '3', '4']:
-                    break
-                self.console.print("[red]Invalid input. Enter a number 1-4.[/red]")
-            
-            user_answer = int(answer) - 1
-            answers[q['question']] = {
-                'selected': options[user_answer],
-                'correct': q['options'][q['correct_index']],
-                'is_correct': user_answer == correct_answer
-            }
-            if user_answer == correct_answer:
-                self.console.print("[green]Correct![/green]")
-                correct += 1
-            else:
-                self.console.print(f"[red]Incorrect.[/red] {q['explanation']}")
-        
-        score = (correct / len(questions)) * 100
-        self.console.print(f"\nQuiz Score: {score}%")
-        self.db.save_sensitive_progress(user_id, answers, score)
-        self.security.log_action(user_id, "QUIZ_COMPLETED", f"Score: {score}%")
-        return score
+        """Administer adaptive quiz with randomized questions."""
+        questions = self.content.quiz_questions.copy()
 
-    def complete_enhanced_checklist(self, user_id: int):
-        """Enhanced checklist with file upload validation"""
-        self.console.print("\n" + "="*70)
-        self.console.print("ENHANCED COMPLIANCE CHECKLIST")
-        self.console.print("="*70)
-        
-        for item_data in self.content.checklist_items:
-            text = item_data["text"]
-            category = item_data["category"]
-            validation_hint = item_data.get("validation_hint", "")
-            
-            self.console.print(f"\n[{category}] {text}")
-            if validation_hint:
-                self.console.print(f"   💡 {validation_hint}")
-            
-            response = ""
-            while response not in ["y", "n", "yes", "no"]:
-                response = input("Completed? (yes/no): ").strip().lower()
-            
-            evidence_path = None
-            if response in ["y", "yes"] and any(keyword in validation_hint.lower() 
-                                              for keyword in ['upload', 'file', 'document']):
-                while True:
-                    evidence_path = input("Enter path to evidence file (PDF/JPG/PNG, <5MB, or Enter to skip): ").strip()
-                    if not evidence_path:
-                        break
-                    if not os.path.exists(evidence_path):
-                        self.console.print("❌ File not found.")
-                        continue
-                    if os.path.getsize(evidence_path) > 5 * 1024 * 1024:  # 5MB limit
-                        self.console.print("❌ File too large. Must be <5MB.")
-                        continue
-                    if not evidence_path.lower().endswith(('.pdf', '.jpg', '.jpeg', '.png')):
-                        self.console.print("❌ Invalid file type. Use PDF, JPG, or PNG.")
-                        continue
-                    
-                    evidence_dir = f"evidence/user_{user_id}"
-                    os.makedirs(evidence_dir, exist_ok=True)
-                    filename = f"{category}_{text[:20].replace(' ', '_')}.{evidence_path.split('.')[-1]}"
-                    dest_path = os.path.join(evidence_dir, filename)
-                    
-                    # Encrypt evidence file
-                    with open(evidence_path, 'rb') as f:
-                        encrypted_data = self.security.cipher.encrypt(f.read())
-                    with open(dest_path, 'wb') as f:
-                        f.write(encrypted_data)
-                    
-                    self.console.print(f"✅ Evidence saved: {filename}")
-                    evidence_path = filename
-                    break
-            
-            self.checklist[text] = response in ["y", "yes"]
-            
-            log_details = f"Item: {text}, Response: {response}"
-            if evidence_path:
-                log_details += f", Evidence: {evidence_path}"
-            self.security.log_action(user_id, "CHECKLIST_ITEM_COMPLETED", log_details)
-        
-        self.console.print("\n✅ Checklist completed!")
-        input("Press Enter to continue...")
+        if not questions:
+            return 0.0
+
+        random.shuffle(questions)
+        selected_questions = questions[:10]  # Use 10 questions
+
+        score = 0
+        print(f"\n🧠 HIPAA KNOWLEDGE QUIZ ({len(selected_questions)} questions)")
+        print("=" * 60)
+
+        for i, q in enumerate(selected_questions, 1):
+            print(f"\nQ{i}: {q['question']}")
+
+            # Randomize options
+            options = q['options'].copy()
+            correct_answer = options[q['correct_index']]
+            random.shuffle(options)
+            new_correct_index = options.index(correct_answer)
+
+            for j, option in enumerate(options):
+                print(f"  {chr(65 + j)}. {option}")
+
+            answer = ""
+            while answer not in ["A", "B", "C", "D"]:
+                answer = input("\nYour answer (A/B/C/D): ").strip().upper()
+
+            user_answer_index = ord(answer) - ord('A')
+            if user_answer_index == new_correct_index:
+                print("✅ Correct!")
+                score += 1
+            else:
+                correct_letter = chr(65 + new_correct_index)
+                print(f"❌ Incorrect. Correct answer: {correct_letter}")
+                print(f"Explanation: {q['explanation']}")
+
+        percentage = (score / len(selected_questions)) * 100
+        self._save_quiz_results(user_id, percentage)
+        self.security.log_action(
+            user_id, "QUIZ_COMPLETED", f"Score: {percentage}%"
+        )
+
+        return percentage
+
+    def _save_quiz_results(self, user_id: int, score: float):
+        """Save quiz results to database."""
+        with self.db._get_connection() as conn:
+            conn.execute(
+                "INSERT INTO training_progress "
+                "(user_id, quiz_score, completed_at) VALUES (?, ?, ?)",
+                (user_id, score, datetime.now())
+            )
