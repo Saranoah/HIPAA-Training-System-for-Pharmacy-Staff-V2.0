@@ -9,34 +9,47 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15  # Prevents infinite runs
 
     strategy:
       matrix:
-        # Test across multiple Python versions for compatibility
         python-version: [3.9, '3.10', '3.11', '3.12']
 
     steps:
-      - name: Checkout repository code
+      - name: 🧭 Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: 🐍 Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
 
-      - name: Install dependencies
+      - name: 📦 Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest pytest-cov flake8
 
-      - name: Run Flake8 for code style checks
+      - name: 🧹 Lint code with Flake8
         run: |
-          flake8 hipaa_training/ || true
+          flake8 hipaa_training/ main.py || true
 
-      - name: Run tests with pytest
+      - name: 🧪 Run tests with Pytest and Coverage
         env:
-          PYTHONPATH: .  # 👈 Ensures hipaa_training is importable
+          PYTHONPATH: .  # ✅ Ensures hipaa_training can be imported
         run: |
-          pytest tests/ --cov=hipaa_training --cov-report=xml --cov-report=term-missing --cov-fail-under=80
+          pytest tests/ \
+            --disable-warnings \
+            --maxfail=3 \
+            --cov=hipaa_training \
+            --cov-report=xml \
+            --cov-report=term-missing \
+            --cov-fail-under=80
+
+      - name: 📊 Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
