@@ -3,6 +3,7 @@
 # HIPAA Training System - Database Backup Script
 BACKUP_DIR="backup"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+DB_PATH="data/hipaa_training.db"
 
 echo "💾 Starting HIPAA Training System backup..."
 
@@ -10,13 +11,15 @@ echo "💾 Starting HIPAA Training System backup..."
 mkdir -p $BACKUP_DIR
 
 # Backup SQLite database
-if [[ -f "hipaa_training.db" ]]; then
+if [[ -f "$DB_PATH" ]]; then
     echo "📊 Backing up SQLite database..."
-    sqlite3 hipaa_training.db ".backup $BACKUP_DIR/hipaa_training_$TIMESTAMP.db"
+    sqlite3 $DB_PATH ".backup $BACKUP_DIR/hipaa_training_$TIMESTAMP.db"
     
     # Compress backup
     gzip $BACKUP_DIR/hipaa_training_$TIMESTAMP.db
     echo "✓ Database backed up to: $BACKUP_DIR/hipaa_training_$TIMESTAMP.db.gz"
+else
+    echo "⚠️ Database file $DB_PATH not found."
 fi
 
 # Backup content files
