@@ -27,9 +27,7 @@ class CLI(cmd.Cmd):
         try:
             args = line.split()
             if len(args) < 3:
-                print(
-                    "Usage: login <username> <full_name> <role>"
-                )
+                print("Usage: login <username> <full_name> <role>")
                 return
 
             username = args[0]
@@ -37,12 +35,8 @@ class CLI(cmd.Cmd):
             role = args[-1]
 
             # Sanitize inputs
-            username = self.security.sanitize_input(
-                username, 50, False
-            )
-            full_name = self.security.sanitize_input(
-                full_name, 100
-            )
+            username = self.security.sanitize_input(username, 50, False)
+            full_name = self.security.sanitize_input(full_name, 100)
             role = self.security.sanitize_input(role, 50)
 
             # Create or get user
@@ -50,8 +44,7 @@ class CLI(cmd.Cmd):
             with DatabaseManager()._get_connection() as conn:
                 cursor = conn.execute(
                     "INSERT OR IGNORE INTO users "
-                    "(username, full_name, role) "
-                    "VALUES (?, ?, ?)",
+                    "(username, full_name, role) VALUES (?, ?, ?)",
                     (username, full_name, role)
                 )
 
@@ -68,11 +61,9 @@ class CLI(cmd.Cmd):
                 'id': user_id,
                 'username': username,
                 'full_name': full_name,
-                'role': role
+                'role': role,
             }
-            self.security.log_action(
-                user_id, "USER_LOGIN", f"Role: {role}"
-            )
+            self.security.log_action(user_id, "USER_LOGIN", f"Role: {role}")
             print(f"✅ Welcome, {full_name}!")
 
         except Exception as e:
@@ -91,9 +82,7 @@ class CLI(cmd.Cmd):
         # Interactive lessons
         lesson_keys = self.training_engine.content.lessons.keys()
         for lesson_title in lesson_keys:
-            success = self.training_engine.interactive_lesson(
-                user_id, lesson_title
-            )
+            success = self.training_engine.interactive_lesson(user_id, lesson_title)
             if not success:
                 print("Training path incomplete. Please retry.")
                 return
@@ -104,24 +93,16 @@ class CLI(cmd.Cmd):
         # Results
         print(f"\n📊 Final Score: {score:.1f}%")
         if score >= 80:  # Passing threshold
-            print(
-                "🎉 Congratulations! "
-                "You passed the HIPAA training!"
-            )
+            print("🎉 Congratulations! You passed the HIPAA training!")
         else:
-            print(
-                "📚 Please review the materials "
-                "and try again."
-            )
+            print("📚 Please review the materials and try again.")
 
     def do_quiz(self, line):
         """Take standalone quiz"""
         if not self._check_auth():
             return
 
-        score = self.training_engine.adaptive_quiz(
-            self.current_user['id']
-        )
+        score = self.training_engine.adaptive_quiz(self.current_user['id'])
         print(f"\n📊 Quiz Score: {score:.1f}%")
 
     def do_exit(self, line):
@@ -132,9 +113,7 @@ class CLI(cmd.Cmd):
     def _check_auth(self):
         """Check if user is logged in"""
         if not self.current_user:
-            print(
-                "❌ Please login first using 'login' command"
-            )
+            print("❌ Please login first using 'login' command")
             return False
         return True
 
