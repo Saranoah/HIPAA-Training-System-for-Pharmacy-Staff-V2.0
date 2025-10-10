@@ -2,11 +2,10 @@ import logging
 import os
 import re
 from datetime import datetime
-import sqlite3
 
 
 class SecurityManager:
-    """Handles security, auditing, and input validation for HIPAA compliance."""
+    """Handles security, auditing, and input validation for HIPAA."""
 
     def __init__(self):
         self.setup_logging()
@@ -14,7 +13,6 @@ class SecurityManager:
     def setup_logging(self):
         """Setup HIPAA-compliant audit logging."""
         os.makedirs("logs", exist_ok=True)
-
         logging.basicConfig(
             level=logging.INFO,
             format='%(asctime)s - %(levelname)s - %(message)s',
@@ -32,7 +30,6 @@ class SecurityManager:
             'details': details,
             'timestamp': datetime.now().isoformat()
         }
-
         logging.info(f"USER_{user_id} - {action} - {details}")
 
         # Store in database
@@ -44,13 +41,18 @@ class SecurityManager:
                 (user_id, action, details)
             )
 
-    def sanitize_input(self, text: str, max_length: int = 255,
-                       allow_spaces: bool = True) -> str:
+    def sanitize_input(
+        self,
+        text: str,
+        max_length: int = 255,
+        allow_spaces: bool = True
+    ) -> str:
         """Sanitize user input to prevent injection attacks."""
         if not text:
             return text
 
         text = str(text).strip()
+
         if len(text) > max_length:
             text = text[:max_length]
 
