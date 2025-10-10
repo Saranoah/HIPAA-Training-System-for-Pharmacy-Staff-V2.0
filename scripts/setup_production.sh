@@ -1,60 +1,69 @@
-#!/bin/bash
-
+#!/usr/bin/env bash
 # HIPAA Training System V3.0 - Production Setup Script
-set -e
+
+set -euo pipefail  # safer: exit on error, unset var, or failed pipe
 
 echo "🏥 HIPAA Training System V3.0 - Production Setup"
 echo "================================================"
 
-# Check Python version
+# --- Check Python version ---
 python_version=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
 echo "✓ Python version: $python_version"
 
-if [[ "$python_version" < "3.8" ]]; then
-    echo "❌ Python 3.8 or higher required"
+# Numeric version check
+min_version=3.8
+if (( $(echo "$python_version < $min_version" | bc -l) )); then
+    echo "❌ Python $min_version or higher required"
     exit 1
 fi
 
-# Create necessary directories
-echo "📁 Creating directory structure..."
-mkdir -p content reports certificates evidence backup data
+# --- Verify required files ---
+if [[ ! -f "requirements.txt" ]]; then
+    echo "❌ Missing requirements.txt"
+    exit 1
+fi
 
-# Check if content files exist
 if [[ ! -f "content/lessons.json" ]]; then
     echo "❌ Missing content/lessons.json - please ensure content files are present"
     exit 1
 fi
 
-# Install dependencies
+# --- Create directories ---
+echo "📁 Creating directory structure..."
+mkdir -p content reports certificates evidence backup data
+
+# --- Install dependencies ---
 echo "📦 Installing dependencies..."
 pip install -r requirements.txt
 
-# Generate encryption key if not set
-if [[ -z "$HIPAA_ENCRYPTION_KEY" ]]; then
+# --- Generate encryption key ---
+if [[ -z "${HIPAA_ENCRYPTION_KEY:-}" ]]; then
     echo "🔑 Generating encryption key..."
-    export HIPAA_ENCRYPTION_KEY=$(python3 -c "import secrets; print(secrets.token_urlsafe(32))")
+    HIPAA_ENCRYPTION_KEY="$(python3 -c "import secrets; print(secrets.token_urlsafe(32))")"
+    export HIPAA_ENCRYPTION_KEY
     echo "⚠️  IMPORTANT: Add to your .env or environment:"
     echo "HIPAA_ENCRYPTION_KEY=\"$HIPAA_ENCRYPTION_KEY\""
 fi
 
-# Generate random salt
-if [[ -z "$HIPAA_SALT" ]]; then
-    export HIPAA_SALT=$(python3 -c "import secrets; print(secrets.token_hex(16))")
+# --- Generate salt ---
+if [[ -z "${HIPAA_SALT:-}" ]]; then
+    HIPAA_SALT="$(python3 -c "import secrets; print(secrets.token_hex(16))")"
+    export HIPAA_SALT
     echo "HIPAA_SALT=\"$HIPAA_SALT\""
 fi
 
-# Set secure permissions
+# --- Secure file permissions ---
 echo "🔒 Setting secure file permissions..."
 chmod 700 certificates reports evidence data
-chmod 600 .env 2>/dev/null || true
+[[ -f ".env" ]] && chmod 600 .env
 
-# Initialize database
+# --- Initialize database ---
 echo "🗄️  Initializing database..."
-python3 -c "
+python3 - <<'PYCODE'
 from hipaa_training.models import DatabaseManager
 db = DatabaseManager()
-print('✓ Database initialized successfully')
-"
+print("✓ Database initialized successfully")
+PYCODE
 
 echo ""
 echo "🎉 Setup completed successfully!"
@@ -69,3 +78,4 @@ echo "For production:"
 echo "- Set HIPAA_ENCRYPTION_KEY and HIPAA_SALT in .env"
 echo "- Configure regular backups (scripts/backup_database.sh)"
 echo "- Monitor audit logs (hipaa_audit.log)"
+
