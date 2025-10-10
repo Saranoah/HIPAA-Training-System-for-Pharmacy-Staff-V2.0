@@ -19,7 +19,7 @@ def health_check():
     
     # Check database
     try:
-        conn = sqlite3.connect('hipaa_training.db')
+        conn = sqlite3.connect('data/hipaa_training.db')
         integrity = conn.execute('PRAGMA integrity_check').fetchone()[0]
         checks['database'] = integrity == 'ok'
         print(f"📊 Database: {'✅ OK' if checks['database'] else '❌ CORRUPTED'}")
