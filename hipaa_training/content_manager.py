@@ -3,33 +3,41 @@ import os
 
 
 class ContentManager:
-    """
-    Manages loading and access to HIPAA training content from
-    JSON files.
-    """
+    """Manages loading and providing training content."""
 
     def __init__(self):
-        self.lessons = self._load_content(
-            "content/lessons.json"
-        )
-        self.quiz_questions = self._load_content(
-            "content/quiz_questions.json"
-        )
-        self.checklist_items = self._load_content(
-            "content/checklist_items.json"
-        )
+        self.base_path = os.path.join(os.getcwd(), "content")
 
-    def _load_content(self, file_path: str):
-        """Load content from JSON files with error handling"""
-        try:
-            if os.path.exists(file_path):
-                with open(file_path, 'r', encoding='utf-8') as f:
-                    return json.load(f)
+    def _load_content(self, filename):
+        """Load content from JSON file; fallback to sample data if missing."""
+        file_path = os.path.join(self.base_path, filename)
+
+        if not os.path.exists(file_path):
+            print(f"Warning: Content file {filename} not found.")
+            # Fallback sample content for missing files
+            if "lesson" in filename.lower():
+                return {"Sample Lesson": "This is a placeholder lesson about HIPAA basics."}
+            elif "quiz" in filename.lower():
+                return {"Sample Question": "What does HIPAA protect?"}
+            elif "checklist" in filename.lower():
+                return {"Sample Checklist Item": "Ensure patient data confidentiality."}
             else:
-                print(
-                    f"Warning: Content file {file_path} not found."
-                )
-                return {} if 'lessons' in file_path else []
-        except json.JSONDecodeError as e:
-            print(f"Error loading {file_path}: {e}")
-            return {} if 'lessons' in file_path else []
+                return {"Sample": "Default content"}
+        try:
+            with open(file_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Error loading {filename}: {e}")
+            return {}
+
+    def load_lessons(self):
+        """Load lesson content."""
+        return self._load_content("lessons.json")
+
+    def load_quiz_questions(self):
+        """Load quiz questions."""
+        return self._load_content("quiz_questions.json")
+
+    def load_checklist_items(self):
+        """Load checklist items."""
+        return self._load_content("checklist_items.json")
