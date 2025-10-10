@@ -1,7 +1,6 @@
 import sqlite3
 import os
 from contextlib import contextmanager
-from datetime import datetime
 
 
 class DatabaseManager:
@@ -17,7 +16,6 @@ class DatabaseManager:
     def _init_db(self):
         """Initialize database tables if they don't exist."""
         os.makedirs("data", exist_ok=True)
-
         with self._get_connection() as conn:
             # Users table
             conn.execute('''
