@@ -28,11 +28,11 @@ jobs:
         pip install pytest pytest-cov pytest-mock flake8
     
     - name: Run style checks
-      run: flake8 hipaa_system_v3.py
+      run: flake8 hipaa_training/ main.py
     
     - name: Run tests with coverage
       run: |
-        pytest tests/ --cov=hipaa_system_v3 --cov-report=xml --cov-report=html
+        pytest tests/ --cov=hipaa_training --cov-report=xml --cov-report=html
     
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
@@ -49,7 +49,7 @@ jobs:
     - name: Run security scan
       uses: pycqa/bandit@master
       with:
-        targets: hipaa_system_v3.py
+        targets: hipaa_training/ main.py
         format: json
         output: bandit-results.json
     
@@ -73,9 +73,10 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
     
-    - name: Build and push Docker image
+    - name: Build and test Docker image
       run: |
         docker build -t your-org/hipaa-training-v3:${{ github.sha }} .
+        docker run --rm -e HIPAA_ENCRYPTION_KEY="test-key-123" your-org/hipaa-training-v3:${{ github.sha }} python main.py --version
         docker push your-org/hipaa-training-v3:${{ github.sha }}
         docker tag your-org/hipaa-training-v3:${{ github.sha }} your-org/hipaa-training-v3:latest
         docker push your-org/hipaa-training-v3:latest
