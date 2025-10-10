@@ -1,8 +1,8 @@
-# hipaa_training/__init__.py
-__version__ = "3.0.0"
+"""
+HIPAA Training System V3.0
+A comprehensive, secure training system for pharmacy staff compliance.
+"""
 
-from .cli import CLI
-from .models import DatabaseManager, UserManager, ComplianceDashboard, Config
-from .security import SecurityManager
-from .training_engine import EnhancedTrainingEngine
-from .content_manager import ContentManager
+__version__ = "3.0.0"
+__author__ = "Israa Ali"
+__email__ = "Israaali2019@yahoo.com"
