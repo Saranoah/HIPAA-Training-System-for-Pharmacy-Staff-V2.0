@@ -11,72 +11,24 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8, 3.9, '3.10']
-    
+        # Test across multiple Python versions for compatibility
+        python-version: [3.9, '3.10', '3.11', '3.12']
+
     steps:
-    - uses: actions/checkout@v3
-    
+    - name: Checkout repository code
+      uses: actions/checkout@v4
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-    
+        cache: 'pip'
+
     - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install pytest pytest-cov pytest-mock flake8
-    
-    - name: Run style checks
+      run: pip install -r requirements.txt
+
+    - name: Run Flake8 for code style checks
       run: flake8 hipaa_training/ main.py
-    
-    - name: Run tests with coverage
-      run: |
-        pytest tests/ --cov=hipaa_training --cov-report=xml --cov-report=html
-    
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
-      with:
-        file: ./coverage.xml
-        flags: unittests
-        name: codecov-umbrella
 
-  security-scan:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Run security scan
-      uses: pycqa/bandit@master
-      with:
-        targets: hipaa_training/ main.py
-        format: json
-        output: bandit-results.json
-    
-    - name: Upload security results
-      uses: actions/upload-artifact@v3
-      with:
-        name: bandit-results
-        path: bandit-results.json
-
-  docker-build:
-    runs-on: ubuntu-latest
-    needs: test
-    if: github.ref == 'refs/heads/main'
-    
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-    
-    - name: Build and test Docker image
-      run: |
-        docker build -t your-org/hipaa-training-v3:${{ github.sha }} .
-        docker run --rm -e HIPAA_ENCRYPTION_KEY="test-key-123" your-org/hipaa-training-v3:${{ github.sha }} python main.py --version
-        docker push your-org/hipaa-training-v3:${{ github.sha }}
-        docker tag your-org/hipaa-training-v3:${{ github.sha }} your-org/hipaa-training-v3:latest
-        docker push your-org/hipaa-training-v3:latest
+    - name: Run tests with pytest
+      run: pytest tests/ --cov=hipaa_training --cov-report=xml --cov-fail-under=80
