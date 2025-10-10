@@ -1,5 +1,5 @@
 import pytest
-from hipaa_system_v3 import SecurityManager
+from hipaa_training.security import SecurityManager
 from unittest.mock import patch, mock_open
 import base64
 from cryptography.fernet import Fernet
@@ -7,7 +7,7 @@ from cryptography.fernet import Fernet
 @pytest.fixture
 def security_manager():
     with patch('os.getenv') as mock_getenv:
-        mock_getenv.return_value = 'test-key-32-characters-long-enough'
+        mock_getenv.side_effect = lambda key, default=None: 'test-key-32-characters-long-enough' if key == 'HIPAA_ENCRYPTION_KEY' else default
         return SecurityManager()
 
 def test_encrypt_decrypt_round_trip(security_manager):
