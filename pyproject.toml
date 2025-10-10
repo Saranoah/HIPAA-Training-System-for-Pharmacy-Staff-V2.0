@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,10 +7,11 @@ name = "hipaa-training-system"
 version = "3.0.0"
 description = "Enterprise HIPAA Compliance Training for Pharmacy Staff"
 authors = [
-    {name = "Your Name", email = "your.email@example.com"},
+    { name = "Your Name", email = "your.email@example.com" },
 ]
 readme = "README.md"
-license = {text = "MIT"}
+license = "MIT"
+requires-python = ">=3.8"
 keywords = ["hipaa", "compliance", "training", "pharmacy", "healthcare"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -20,7 +21,10 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
 ]
+
 dependencies = [
     "cryptography>=3.4.8",
     "sqlalchemy>=1.4.23",
@@ -53,3 +57,8 @@ Repository = "https://github.com/your-org/hipaa-training-v3"
 
 [project.scripts]
 hipaa-training = "hipaa_training.cli:main"
+
+# ✅ Explicitly tell setuptools what to include
+[tool.setuptools.packages.find]
+include = ["hipaa_training", "hipaa_training.*"]
+
