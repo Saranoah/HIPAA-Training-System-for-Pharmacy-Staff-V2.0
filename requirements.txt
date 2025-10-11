@@ -1,13 +1,24 @@
-# Core dependencies
-cryptography>=3.4.8
+# HIPAA Training System V3.0 - Python Dependencies
 
-# Optional utilities (comment out if unused)
-python-dateutil>=2.8.2
+# Core Dependencies
+cryptography>=41.0.0     # Encryption for PHI data
+rich>=13.7.0             # Beautiful CLI formatting
+python-dotenv>=1.0.0     # Environment variable management
 
-# Development & Testing
-pytest>=7.0.0
-pytest-cov>=4.0.0
-pytest-mock>=3.10.0
-flake8>=6.0.0
-bandit>=1.7.5
+# Testing & Quality Assurance
+pytest>=7.4.0            # Testing framework
+pytest-cov>=4.1.0        # Code coverage reporting
+pytest-mock>=3.12.0      # Mocking for tests
+flake8>=6.1.0            # Code linting
+black>=23.12.0           # Code formatting
+mypy>=1.7.0              # Type checking
+bandit>=1.7.5            # Security vulnerability scanning
 
+# Database (SQLite is built-in to Python, but we may want PostgreSQL support)
+# psycopg2-binary>=2.9.9  # Uncomment for PostgreSQL support
+
+# Development Dependencies
+ipython>=8.18.0          # Better REPL for debugging
+
+# Production Dependencies
+gunicorn>=21.2.0         # WSGI server (if you add web interface later)
