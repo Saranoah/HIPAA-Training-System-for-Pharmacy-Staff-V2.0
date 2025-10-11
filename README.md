@@ -168,7 +168,11 @@ Example test areas:
 
 ## 📁 Project Structure
 
-├── main.py # 🎯 Entry point for the application
+## 📁 Project Structure
+
+```plaintext
+hipaa-training-v3/
+├── main.py                    # 🎯 Entry point for the application
 ├── README.md
 ├── CONTRIBUTING.md
 ├── LICENSE
@@ -178,42 +182,43 @@ Example test areas:
 ├── .gitignore
 
 ├── .github/
-│ └── workflows/
-│ └── ci.yml # ✅ GitHub Actions CI/CD pipeline
+│   └── workflows/
+│       └── ci.yml             # ✅ GitHub Actions CI/CD pipeline
 
 ├── hipaa_training/
-│ ├── init.py
-│ ├── cli.py # 🧠 Command-line interface
-│ ├── models.py # 🗃️ Database schema and manager
-│ ├── security.py # 🔐 Encryption and audit logging
-│ ├── training_engine.py # 🧩 Core adaptive learning engine
-│ └── content_manager.py # 📚 Content loading and management
+│   ├── __init__.py
+│   ├── cli.py                 # 🧠 Command-line interface
+│   ├── models.py              # 🗃️ Database schema and manager
+│   ├── security.py            # 🔐 Encryption and audit logging
+│   ├── training_engine.py     # 🧩 Core adaptive learning engine
+│   └── content_manager.py     # 📚 Content loading and management
 
 ├── content/
-│ ├── lessons.json
-│ ├── quiz_questions.json
-│ └── checklist_items.json
+│   ├── lessons.json
+│   ├── quiz_questions.json
+│   └── checklist_items.json
 
 ├── docs/
-│ ├── DEPLOYMENT.md
-│ ├── API.md
-│ ├── CUSTOMIZATION.md
-│ └── SECURITY.md
+│   ├── DEPLOYMENT.md
+│   ├── API.md
+│   ├── CUSTOMIZATION.md
+│   └── SECURITY.md
 
 ├── tests/
-│ ├── test_user_manager.py
-│ ├── test_training_engine.py
-│ ├── test_compliance_dashboard.py
-│ ├── test_content_manager.py
-│ └── test_security_manager.py
+│   ├── test_user_manager.py
+│   ├── test_training_engine.py
+│   ├── test_compliance_dashboard.py
+│   ├── test_content_manager.py
+│   └── test_security_manager.py
 
 ├── scripts/
-│ ├── setup_production.sh
-│ ├── backup_database.sh
-│ └── health_check.py
+│   ├── setup_production.sh
+│   ├── backup_database.sh
+│   └── health_check.py
 
-├── evidence/ # 🧾 Generated audit logs at runtime
-└── data/ # 💾 Database and user progress storage
+├── evidence/                  # 🧾 Generated audit logs at runtime
+└── data/                      # 💾 Database and user progress storage
+
 
 ```
 
