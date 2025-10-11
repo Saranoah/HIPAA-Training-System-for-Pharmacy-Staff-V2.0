@@ -1,118 +1,112 @@
-import cmd
-from .models import DatabaseManager
+# hipaa_training/cli.py
+import os
+from datetime import datetime
+from rich.console import Console
+from rich.panel import Panel
+from .models import UserManager, DatabaseManager, ComplianceDashboard
 from .training_engine import EnhancedTrainingEngine
 from .security import SecurityManager
 
-
-class CLI(cmd.Cmd):
-    """Command-line interface for the HIPAA Training System."""
-
-    prompt = "HIPAA >> "
-    intro = "Welcome to HIPAA Training System V3.0. Type 'help' for commands."
-
+class CLI:
     def __init__(self):
-        super().__init__()
+        self.console = Console()
+        self.db = DatabaseManager()
+        self.user_manager = UserManager()
         self.training_engine = EnhancedTrainingEngine()
+        self.compliance_dashboard = ComplianceDashboard()
         self.security = SecurityManager()
-        self.current_user = None
 
-    # -------------------------------
-    # Core Commands
-    # -------------------------------
-    def do_login(self, line):
-        """Login: login <username> <full_name> <role>"""
+    def run(self):
+        """Main CLI loop"""
+        self._display_welcome()
+        while True:
+            self._display_menu()
+            choice = input("Enter your choice (1-5): ").strip()
+            self.security.log_action(0, "MENU_ACCESS", f"Selected option: {choice}")
+
+            if choice == "1":
+                self._create_user()
+            elif choice == "2":
+                self._start_training()
+            elif choice == "3":
+                self._complete_checklist()
+            elif choice == "4":
+                self._generate_report()
+            elif choice == "5":
+                self.console.print("[green]Exiting HIPAA Training System. Goodbye![/green]")
+                break
+            else:
+                self.console.print("[red]Invalid choice. Please try again.[/red]")
+
+    def _display_welcome(self):
+        """Display welcome message with system info"""
+        self.console.print(Panel.fit(
+            "[bold cyan]Welcome to HIPAA Training System V3.0[/bold cyan]\n"
+            "Enterprise-grade compliance training for pharmacies\n"
+            f"Version: 3.0.0 | Date: {datetime.now().strftime('%Y-%m-%d')}",
+            title="HIPAA Training",
+            border_style="blue"
+        ))
+
+    def _display_menu(self):
+        """Display main menu"""
+        self.console.print("\n[bold]Main Menu[/bold]")
+        self.console.print("1. Create New User")
+        self.console.print("2. Start Training")
+        self.console.print("3. Complete Compliance Checklist")
+        self.console.print("4. Generate Compliance Report")
+        self.console.print("5. Exit")
+
+    def _create_user(self):
+        """Create a new user"""
+        username = input("Enter username: ").strip()
+        full_name = input("Enter full name: ").strip()
+        role = input("Enter role (admin/staff/auditor): ").strip().lower()
         try:
-            args = line.split()
-            if len(args) < 3:
-                print("Usage: login <username> <full_name> <role>")
-                return None
+            user_id = self.user_manager.create_user(username, full_name, role)
+            self.console.print(f"[green]User created successfully! ID: {user_id}[/green]")
+        except ValueError as e:
+            self.console.print(f"[red]Error: {str(e)}[/red]")
 
-            username = args[0]
-            full_name = " ".join(args[1:-1])
-            role = args[-1]
-
-            # Sanitize inputs
-            username = self.security.sanitize_input(username, 50, False)
-            full_name = self.security.sanitize_input(full_name, 100)
-            role = self.security.sanitize_input(role, 50)
-
-            with DatabaseManager()._get_connection() as conn:
-                conn.row_factory = None
-                cursor = conn.execute(
-                    "INSERT OR IGNORE INTO users (username, full_name, role) VALUES (?, ?, ?)",
-                    (username, full_name, role)
-                )
-
-                if cursor.lastrowid:
-                    user_id = cursor.lastrowid
-                else:
-                    user = conn.execute(
-                        "SELECT id FROM users WHERE username = ?",
-                        (username,)
-                    ).fetchone()
-                    user_id = user["id"] if isinstance(user, dict) else user[0]
-
-            self.current_user = {
-                "id": user_id,
-                "username": username,
-                "full_name": full_name,
-                "role": role,
-            }
-
-            self.security.log_action(user_id, "USER_LOGIN", f"Role: {role}")
-            print(f"✅ Welcome, {full_name}!")
-
-        except Exception as e:
-            print(f"❌ Login error: {e}")
-
-    def do_training(self, line):
-        """Start complete training path"""
-        if not self._check_auth():
-            return None
-
-        print("\n🎯 COMPLETE TRAINING PATH")
-        print("=" * 50)
-
-        user_id = self.current_user["id"]
-
-        for lesson_title in self.training_engine.content.lessons.keys():
-            success = self.training_engine.interactive_lesson(user_id, lesson_title)
-            if not success:
-                print("Training path incomplete. Please retry.")
-                return None
-
+    def _start_training(self):
+        """Start training session for a user"""
+        user_id = input("Enter user ID: ").strip()
+        if not user_id.isdigit() or not self.user_manager.user_exists(int(user_id)):
+            self.console.print("[red]Invalid user ID.[/red]")
+            return
+        
+        user_id = int(user_id)
+        lessons = self.training_engine.content.lessons.keys()
+        for lesson in lessons:
+            self.training_engine.display_lesson(user_id, lesson)
+            if not self.training_engine._mini_quiz(self.training_engine.content.lessons[lesson]):
+                self.console.print("[red]Failed comprehension quiz. Please review the lesson.[/red]")
+                continue
+            self.db.save_progress(user_id, lesson, None, None)
+        
         score = self.training_engine.adaptive_quiz(user_id)
-        print(f"\n📊 Final Score: {score:.1f}%")
-
-        if score >= 80:
-            print("🎉 Congratulations! You passed the HIPAA training!")
+        if score >= self.training_engine.config.PASS_THRESHOLD:
+            certificate_id = self.db.issue_certificate(user_id, score)
+            self.console.print(f"[green]Training completed! Certificate ID: {certificate_id}[/green]")
         else:
-            print("📚 Please review the materials and try again.")
+            self.console.print(f"[red]Failed quiz with score {score}%. Retake required.[/red]")
 
-    def do_quiz(self, line):
-        """Take standalone quiz"""
-        if not self._check_auth():
-            return None
+    def _complete_checklist(self):
+        """Complete compliance checklist for a user"""
+        user_id = input("Enter user ID: ").strip()
+        if not user_id.isdigit() or not self.user_manager.user_exists(int(user_id)):
+            self.console.print("[red]Invalid user ID.[/red]")
+            return
+        
+        user_id = int(user_id)
+        self.training_engine.complete_enhanced_checklist(user_id)
+        self.db.save_sensitive_progress(user_id, self.training_engine.checklist, None)
 
-        score = self.training_engine.adaptive_quiz(self.current_user["id"])
-        print(f"\n📊 Quiz Score: {score:.1f}%")
-
-    def do_exit(self, line):
-        """Exit the application"""
-        print("Thank you for using HIPAA Training System!")
-        return True
-
-    # -------------------------------
-    # Helpers
-    # -------------------------------
-    def _check_auth(self):
-        if not self.current_user:
-            print("❌ Please login first using 'login' command")
-            return False
-        return True
-
-    def preloop(self):
-        print("Initializing HIPAA Training System...")
-
-    def postloop(self):
-        print("Session ended.")
+    def _generate_report(self):
+        """Generate compliance report"""
+        format_type = input("Enter report format (csv/json): ").strip().lower()
+        if format_type not in ['csv', 'json']:
+            self.console.print("[red]Invalid format. Use 'csv' or 'json'.[/red]")
+            return
+        filename = self.compliance_dashboard.generate_enterprise_report(format_type)
+        self.console.print(f"[green]Report generated: {filename}[/green]")
