@@ -168,24 +168,47 @@ Example test areas:
 
 ## 📁 Project Structure
 
-```
-hipaa-training-system/
+hipaa-training-v3/
+├── main.py                    
+├── README.md
+├── CONTRIBUTING.md
+├── LICENSE
+├── requirements.txt
+├── docker-compose.yml
+├── .env.example
+├── .gitignore
+├── .github/
+│   └── workflows/
+│       └── ci.yml
 ├── hipaa_training/
 │   ├── __init__.py
 │   ├── cli.py
-│   ├── content_manager.py
 │   ├── models.py
 │   ├── security.py
 │   ├── training_engine.py
-│   └── data/
-│       ├── lessons.json
-│       ├── quiz_questions.json
-│       └── checklist_items.json
-├── main.py
-├── requirements.txt
-├── LICENSE
-├── README.md
-└── tests/
+│   └── content_manager.py
+├── content/
+│   ├── lessons.json
+│   ├── quiz_questions.json
+│   └── checklist_items.json
+├── docs/
+│   ├── DEPLOYMENT.md
+│   ├── API.md
+│   ├── CUSTOMIZATION.md
+│   └── SECURITY.md
+├── tests/
+│   ├── test_user_manager.py
+│   ├── test_training_engine.py
+│   ├── test_compliance_dashboard.py
+│   ├── test_content_manager.py
+│   └── test_security_manager.py
+├── scripts/
+│   ├── setup_production.sh
+│   ├── backup_database.sh
+│   └── health_check.py
+├── evidence/                 # Created at runtime
+└── data/                     # Created at runtime
+
 ```
 
 ---
