@@ -2,6 +2,7 @@ import logging
 import os
 import re
 import base64
+import sqlite3  # noqa: F401  # Used indirectly by DatabaseManager
 from cryptography.fernet import Fernet
 
 
@@ -17,14 +18,15 @@ class SecurityManager:
     # ---------- Logging ---------- #
     def setup_logging(self):
         """Setup HIPAA-compliant audit logging"""
-        os.makedirs("logs", exist_ok=True)
+        log_dir = os.path.join(os.path.dirname(__file__), "logs")
+        os.makedirs(log_dir, exist_ok=True)
 
         self.logger = logging.getLogger("hipaa_audit")
         self.logger.setLevel(logging.INFO)
 
         # Avoid duplicate handlers if reinitialized
         if not self.logger.handlers:
-            file_handler = logging.FileHandler("logs/hipaa_audit.log")
+            file_handler = logging.FileHandler(os.path.join(log_dir, "hipaa_audit.log"))
             stream_handler = logging.StreamHandler()
             formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
             file_handler.setFormatter(formatter)
@@ -39,12 +41,14 @@ class SecurityManager:
         # Example DB logging hook (optional)
         try:
             from .models import DatabaseManager
-            with DatabaseManager()._get_connection() as conn:
-                conn.execute(
-                    """INSERT INTO audit_log (user_id, action, details)
-                       VALUES (?, ?, ?)""",
-                    (user_id, action, details),
-                )
+            db_path = os.path.join(os.path.dirname(__file__), "data", "hipaa_training.db")
+            if os.path.exists(db_path):
+                with DatabaseManager()._get_connection() as conn:
+                    conn.execute(
+                        """INSERT INTO audit_log (user_id, action, details)
+                           VALUES (?, ?, ?)""",
+                        (user_id, action, details),
+                    )
         except Exception as e:
             self.logger.warning(f"DB log_action failed: {e}")
 
@@ -52,24 +56,26 @@ class SecurityManager:
     def _load_encryption_key(self) -> bytes:
         """Load or generate encryption key from environment"""
         key_str = os.getenv("HIPAA_ENCRYPTION_KEY")
-        if not key_str:
-            key = Fernet.generate_key()
-            os.environ["HIPAA_ENCRYPTION_KEY"] = key.decode()
-            return key
 
-        # Ensure it’s a valid 32-byte base64 key
         try:
-            # If the key provided in env isn’t base64, encode it
-            if len(key_str) != 44:  # 32-byte key encoded in base64 = 44 chars
+            if not key_str:
+                key = Fernet.generate_key()
+                os.environ["HIPAA_ENCRYPTION_KEY"] = key.decode()
+                return key
+
+            if len(key_str) != 44:  # Fernet key must be 32 bytes (base64 = 44 chars)
                 key = base64.urlsafe_b64encode(key_str.encode("utf-8")[:32])
             else:
                 key = key_str.encode("utf-8")
-            # Validate
+
+            # Validate the key
             Fernet(key)
             return key
         except Exception:
-            # Fall back to a valid key
-            return Fernet.generate_key()
+            # Fallback to a valid random key
+            new_key = Fernet.generate_key()
+            os.environ["HIPAA_ENCRYPTION_KEY"] = new_key.decode()
+            return new_key
 
     def encrypt_data(self, data: str) -> str:
         """Encrypt sensitive data using Fernet symmetric encryption"""
@@ -112,3 +118,4 @@ class SecurityManager:
             text = re.sub(r"[^a-zA-Z0-9\.\-_@]", "", text)
 
         return text
+
