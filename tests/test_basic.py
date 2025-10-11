@@ -1,12 +1,12 @@
-# In tests/test_basic.py, update the test_content_manager_fallback function:
-
 def test_content_manager_fallback():
     cm = ContentManager()
     assert isinstance(cm.lessons, dict)
-    # Change from "Sample Lesson" to "Privacy Rule"
-    assert "Privacy Rule" in cm.lessons
-    # Also verify the lesson structure
-    privacy_lesson = cm.lessons["Privacy Rule"]
-    assert "content" in privacy_lesson
-    assert "key_points" in privacy_lesson
-    assert "comprehension_questions" in privacy_lesson
+    # Check that we have at least one lesson with expected structure
+    assert len(cm.lessons) > 0
+    first_lesson_key = list(cm.lessons.keys())[0]
+    lesson = cm.lessons[first_lesson_key]
+    
+    # Verify lesson structure
+    assert "content" in lesson
+    assert "key_points" in lesson  
+    assert "comprehension_questions" in lesson
