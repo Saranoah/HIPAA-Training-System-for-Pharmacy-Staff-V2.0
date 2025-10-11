@@ -28,3 +28,5 @@ dependencies = [
 
 [project.urls]
 Homepage = "https://github.com/Saranoah/HIPAA-Training-System-for-Pharmacy-Staff-V3.0"
+Issues = "https://github.com/Saranoah/HIPAA-Training-System-for-Pharmacy-Staff-V3.0/issues"
+Documentation = "https://github.com/Saranoah/HIPAA-Training-System-for-Pharmacy-Staff-V3.0#readme"
