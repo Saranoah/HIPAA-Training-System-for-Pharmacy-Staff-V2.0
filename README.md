@@ -168,8 +168,7 @@ Example test areas:
 
 ## 📁 Project Structure
 
-hipaa-training-v3/
-├── main.py                    
+├── main.py # 🎯 Entry point for the application
 ├── README.md
 ├── CONTRIBUTING.md
 ├── LICENSE
@@ -177,37 +176,44 @@ hipaa-training-v3/
 ├── docker-compose.yml
 ├── .env.example
 ├── .gitignore
+
 ├── .github/
-│   └── workflows/
-│       └── ci.yml
+│ └── workflows/
+│ └── ci.yml # ✅ GitHub Actions CI/CD pipeline
+
 ├── hipaa_training/
-│   ├── __init__.py
-│   ├── cli.py
-│   ├── models.py
-│   ├── security.py
-│   ├── training_engine.py
-│   └── content_manager.py
+│ ├── init.py
+│ ├── cli.py # 🧠 Command-line interface
+│ ├── models.py # 🗃️ Database schema and manager
+│ ├── security.py # 🔐 Encryption and audit logging
+│ ├── training_engine.py # 🧩 Core adaptive learning engine
+│ └── content_manager.py # 📚 Content loading and management
+
 ├── content/
-│   ├── lessons.json
-│   ├── quiz_questions.json
-│   └── checklist_items.json
+│ ├── lessons.json
+│ ├── quiz_questions.json
+│ └── checklist_items.json
+
 ├── docs/
-│   ├── DEPLOYMENT.md
-│   ├── API.md
-│   ├── CUSTOMIZATION.md
-│   └── SECURITY.md
+│ ├── DEPLOYMENT.md
+│ ├── API.md
+│ ├── CUSTOMIZATION.md
+│ └── SECURITY.md
+
 ├── tests/
-│   ├── test_user_manager.py
-│   ├── test_training_engine.py
-│   ├── test_compliance_dashboard.py
-│   ├── test_content_manager.py
-│   └── test_security_manager.py
+│ ├── test_user_manager.py
+│ ├── test_training_engine.py
+│ ├── test_compliance_dashboard.py
+│ ├── test_content_manager.py
+│ └── test_security_manager.py
+
 ├── scripts/
-│   ├── setup_production.sh
-│   ├── backup_database.sh
-│   └── health_check.py
-├── evidence/                 # Created at runtime
-└── data/                     # Created at runtime
+│ ├── setup_production.sh
+│ ├── backup_database.sh
+│ └── health_check.py
+
+├── evidence/ # 🧾 Generated audit logs at runtime
+└── data/ # 💾 Database and user progress storage
 
 ```
 
