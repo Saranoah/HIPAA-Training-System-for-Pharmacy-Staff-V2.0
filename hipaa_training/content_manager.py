@@ -1,46 +1,81 @@
-import os
 import json
+import os
+from rich.console import Console
+
+console = Console()
 
 
 class ContentManager:
-    """Handles loading and management of training content such as lessons, quizzes, and checklists."""
+    """
+    Loads and manages training content (lessons, quizzes, checklists).
+    Falls back to default content if files are missing.
+    """
 
     def __init__(self):
-        """Initialize content attributes with data or safe fallbacks."""
-        self.lessons = self._load_content("lessons.json")
-        self.quiz_questions = self._load_content("quiz_questions.json")
-        self.checklist_items = self._load_content("checklist_items.json")
+        self.lessons = self._load_json("content/lessons.json", self._default_lessons())
+        self.quiz_questions = self._load_json("content/quiz_questions.json", self._default_quiz_questions())
+        self.checklist_items = self._load_json("content/checklist_items.json", self._default_checklist_items())
 
-    def _load_content(self, filename):
-        """Loads content from JSON file or returns fallback data if missing or invalid."""
-        data_dir = os.path.join(os.path.dirname(__file__), "data")
-        os.makedirs(data_dir, exist_ok=True)
-        path = os.path.join(data_dir, filename)
-
-        if not os.path.exists(path):
-            print(f"⚠️ Warning: {filename} not found. Using fallback content.")
-            return self._fallback_content(filename)
-
+    def _load_json(self, path, fallback):
+        """Load JSON content with fallback."""
         try:
-            with open(path, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except (json.JSONDecodeError, OSError):
-            print(f"⚠️ Warning: Failed to load {filename}. Using fallback content.")
-            return self._fallback_content(filename)
+            if os.path.exists(path):
+                with open(path, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            else:
+                console.print(f"⚠️ Warning: {os.path.basename(path)} not found. Using fallback content.")
+                return fallback
+        except Exception as e:
+            console.print(f"⚠️ Error loading {path}: {e}")
+            return fallback
 
-    def _fallback_content(self, filename):
-        """Provide fallback content based on file type."""
-        if "lesson" in filename:
-            return {
-                "Sample Lesson": {
-                    "content": "Fallback content",
-                    "key_points": [],
-                    "comprehension_questions": []
-                }
+    # ---------- Fallback Content ---------- #
+    def _default_lessons(self):
+        return {
+            "Sample Lesson": {
+                "content": "Welcome to the HIPAA Training System! This is a sample fallback lesson.",
+                "key_points": [
+                    "Understand patient privacy.",
+                    "Protect PHI under HIPAA.",
+                    "Report any data breach immediately."
+                ],
+                "comprehension_questions": [
+                    {
+                        "question": "What is PHI?",
+                        "options": ["Protected Health Information", "Public Health Info", "Patient Hospital ID", "Private Healthcare Insurance"],
+                        "correct_index": 0
+                    }
+                ]
+            },
+            "Privacy Rule": {
+                "content": "The HIPAA Privacy Rule protects individuals' medical records and other personal health information.",
+                "key_points": [
+                    "Covers all forms of PHI",
+                    "Requires patient authorization for disclosure"
+                ],
+                "comprehension_questions": [
+                    {
+                        "question": "What does the Privacy Rule protect?",
+                        "options": ["PHI", "Social Media", "Credit Scores", "Employment Records"],
+                        "correct_index": 0
+                    }
+                ]
             }
-        elif "quiz" in filename:
-            return [{"question": "Sample question?", "answer": "Sample answer"}]
-        elif "checklist" in filename:
-            return ["Sample checklist item"]
-        return {}
+        }
+
+    def _default_quiz_questions(self):
+        return [
+            {
+                "question": "What should you do if you suspect a HIPAA violation?",
+                "options": ["Ignore it", "Report to Privacy Officer", "Post about it", "Tell a friend"],
+                "correct_index": 1
+            }
+        ]
+
+    def _default_checklist_items(self):
+        return [
+            "Completed HIPAA Privacy training",
+            "Reviewed PHI storage procedures",
+            "Understands breach reporting protocol"
+        ]
 
