@@ -1,6 +1,10 @@
 # HIPAA Training System V3.0 - API Documentation
 
 This document describes the internal API and module structure of the HIPAA Training System.
+
+---
+
+## 📦 Module Structure
 hipaa_training/
 ├── init.py          # Package initialization and exports
 ├── cli.py               # Command-line interface
@@ -8,8 +12,6 @@ hipaa_training/
 ├── security.py          # Security and encryption functions
 ├── training_engine.py   # Training content delivery
 └── content_manager.py   # Content loading and validation
-
----
 
 ## 🔧 Core Modules
 
