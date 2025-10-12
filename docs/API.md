@@ -5,7 +5,6 @@ This document describes the internal API and module structure of the HIPAA Train
 ---
 
 ## 📦 Module Structure
-
 hipaa_training/
 ├── init.py          # Package initialization and exports
 ├── cli.py               # Command-line interface
@@ -13,8 +12,8 @@ hipaa_training/
 ├── security.py          # Security and encryption functions
 ├── training_engine.py   # Training content delivery
 └── content_manager.py   # Content loading and validation
+---
 
- 
 ## 🔧 Core Modules
 
 ### `models.py`
@@ -36,14 +35,12 @@ PASS_THRESHOLD - Quiz passing percentage
 TRAINING_EXPIRY_DAYS - Certificate validity in days
 HIPAA_ENCRYPTION_KEY - REQUIRED encryption key
 HIPAA_SALT - Salt for key derivation
-
-
 DatabaseManager Class
 Manages all database operations.
 Methods:
-python__init__(db_path: str = Config.DB_PATH) -> None
+__init__(db_path: str = Config.DB_PATH) -> None
 Initialize database connection and create tables.
-pythonsave_progress(user_id: int, lesson_title: str, score: Optional[float], 
+save_progress(user_id: int, lesson_title: str, score: Optional[float], 
               checklist_data: Optional[Dict]) -> None
 Save training progress for a user.
 Parameters:
@@ -52,17 +49,16 @@ user_id - User identifier
 lesson_title - Name of completed lesson
 score - Quiz score (optional)
 checklist_data - Checklist responses (optional)
-
-pythonsave_sensitive_progress(user_id: int, checklist_data: Dict, 
+save_sensitive_progress(user_id: int, checklist_data: Dict, 
                         score: Optional[float]) -> None
 Save progress with encrypted sensitive data.
-pythonissue_certificate(user_id: int, score: float) -> str
+issue_certificate(user_id: int, score: float) -> str
 Issue a training certificate.
 Returns: Certificate UUID
-pythonget_compliance_stats() -> Dict
+get_compliance_stats() -> Dict
 Retrieve compliance statistics for reporting.
 Returns:
-python{
+{
     "total_users": int,
     "avg_score": float,
     "pass_rate": float,
@@ -70,11 +66,10 @@ python{
     "active_certs": int,
     "expired_certs": int
 }
-
 UserManager Class
 Manages user creation and validation.
 Methods:
-pythoncreate_user(username: str, full_name: str, role: str) -> int
+create_user(username: str, full_name: str, role: str) -> int
 Create a new user.
 Parameters:
 
@@ -86,24 +81,22 @@ Returns: User ID
 Raises:
 
 ValueError - Invalid role or duplicate username
-
-pythonuser_exists(user_id: int) -> bool
+user_exists(user_id: int) -> bool
 Check if a user exists.
-pythonget_user(user_id: int) -> Optional[Dict]
+get_user(user_id: int) -> Optional[Dict]
 Get user details by ID.
 Returns:
-python{
+{
     "id": int,
     "username": str,
     "full_name": str,
     "role": str,
     "created_at": str
 }
-
 ComplianceDashboard Class
 Generates compliance reports.
 Methods:
-pythongenerate_enterprise_report(format_type: str) -> str
+generate_enterprise_report(format_type: str) -> str
 Generate compliance report in CSV or JSON format.
 Parameters:
 
@@ -113,36 +106,33 @@ Returns: Generated filename
 Raises:
 
 ValueError - Invalid format type
-
-
 security.py
 SecurityManager Class
 Handles encryption, decryption, and audit logging.
 Methods:
-pythonencrypt_data(data: str) -> str
+encrypt_data(data: str) -> str
 Encrypt sensitive string data using Fernet.
 Parameters:
 
 data - Plain text string
 
 Returns: Base64-encoded encrypted string
-pythondecrypt_data(encrypted_data: str) -> str
+decrypt_data(encrypted_data: str) -> str
 Decrypt encrypted string data.
 Parameters:
 
 encrypted_data - Base64-encoded encrypted string
 
 Returns: Plain text string
-pythonencrypt_file(input_path: str, output_path: str) -> None
+encrypt_file(input_path: str, output_path: str) -> None
 Encrypt a file in chunks (memory-efficient for large files).
 Parameters:
 
 input_path - Path to source file
 output_path - Path for encrypted output
-
-pythondecrypt_file(input_path: str, output_path: str) -> None
+decrypt_file(input_path: str, output_path: str) -> None
 Decrypt a file that was encrypted in chunks.
-pythonlog_action(user_id: int, action: str, details: str) -> None
+log_action(user_id: int, action: str, details: str) -> None
 Log an action to both file and database for HIPAA audit trail.
 Parameters:
 
@@ -155,23 +145,23 @@ training_engine.py
 EnhancedTrainingEngine Class
 Manages training delivery and assessment.
 Methods:
-pythondisplay_lesson(user_id: int, lesson_title: str) -> None
+display_lesson(user_id: int, lesson_title: str) -> None
 Display a lesson with formatted output.
-pythonadaptive_quiz(user_id: int) -> float
+adaptive_quiz(user_id: int) -> float
 Conduct adaptive final quiz with randomized questions.
 Returns: Score as percentage (0-100)
-pythoncomplete_enhanced_checklist(user_id: int) -> None
+complete_enhanced_checklist(user_id: int) -> None
 Guide user through compliance checklist with evidence upload.
 
 content_manager.py
 ContentManager Class
 Loads and validates training content.
 Attributes:
-pythonlessons: Dict[str, Dict]              # Lesson content
+lessons: Dict[str, Dict]              # Lesson content
 quiz_questions: List[Dict]            # Quiz questions
 checklist_items: List[Dict]           # Checklist items
 Methods:
-pythonget_lesson(lesson_title: str) -> Dict
+get_lesson(lesson_title: str) -> Dict
 Get a specific lesson by title.
 pythonget_all_lessons() -> List[str]
 Get list of all lesson titles.
@@ -184,20 +174,20 @@ cli.py
 CLI Class
 Command-line interface for the training system.
 Methods:
-pythonrun() -> None
-Main CLI loop - displays menu and handles user input.
+run() -> None
 
 🗄️ Database Schema
 users Table
-sqlCREATE TABLE users (
+CREATE TABLE users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
     full_name TEXT NOT NULL,
     role TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 training_progress Table
-sqlCREATE TABLE training_progress (
+CREATE TABLE training_progress (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     lesson_title TEXT,
@@ -207,20 +197,7 @@ sqlCREATE TABLE training_progress (
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 certificates Table
-sqlCREATE TABLE certificates (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
-    certificate_id TEXT UNIQUE NOT NULL,
-    score REAL NOT NULL,
-    issue_date TIMESTAMP NOT NULL,
-    expiry_date TIMESTAMP NOT NULL,
-    revoked BOOLEAN DEFAULT FALSE,
-    revoked_at TIMESTAMP,
-    revoked_reason TEXT,
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
-);
-audit_log Table
-sqlCREATE TABLE audit_log (
+CREATE TABLE audit_log (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER,
     action TEXT NOT NULL,
@@ -230,6 +207,16 @@ sqlCREATE TABLE audit_log (
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE SET NULL
 );
 
+audit_log Table
+CREATE TABLE audit_log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    action TEXT NOT NULL,
+    details TEXT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ip_address TEXT,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE SET NULL
+);
 🔐 Security Features
 Encryption
 
@@ -254,20 +241,20 @@ Session management (future enhancement)
 
 📊 Usage Examples
 Create a User
-pythonfrom hipaa_training.models import UserManager
+from hipaa_training.models import UserManager
 
 manager = UserManager()
 user_id = manager.create_user("jdoe", "John Doe", "staff")
 print(f"Created user ID: {user_id}")
 Encrypt Data
-pythonfrom hipaa_training.security import SecurityManager
+from hipaa_training.security import SecurityManager
 
 security = SecurityManager()
 encrypted = security.encrypt_data("Sensitive PHI")
 decrypted = security.decrypt_data(encrypted)
 assert decrypted == "Sensitive PHI"
 Generate Report
-pythonfrom hipaa_training.models import ComplianceDashboard
+from hipaa_training.models import ComplianceDashboard
 
 dashboard = ComplianceDashboard()
 filename = dashboard.generate_enterprise_report('json')
@@ -275,7 +262,7 @@ print(f"Report saved: {filename}")
 
 🧪 Testing
 Run tests with pytest:
-bashpytest tests/ -v
+pytest tests/ -v
 pytest tests/ --cov=hipaa_training --cov-report=html
 
 📝 Notes
@@ -284,7 +271,6 @@ All methods that access PHI log actions via SecurityManager
 Database uses parameterized queries to prevent SQL injection
 Files are encrypted in 64KB chunks for memory efficiency
 Passwords/keys should never be hardcoded
-
 
 Last Updated: 2025-01-11
 Version: 3.0.1
