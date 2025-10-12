@@ -1,1 +1,163 @@
+[
+  {
+    "category": "PHI",
+    "question": "How many identifiers does HIPAA define as PHI?",
+    "options": ["10", "15", "18", "20"],
+    "correct_index": 2,
+    "difficulty": "easy",
+    "explanation": "HIPAA defines 18 specific identifiers that make health data personally identifiable."
+  },
+  {
+    "category": "Privacy Rule",
+    "question": "What is the main purpose of the HIPAA Privacy Rule?",
+    "options": [
+      "To establish national standards for protecting health information",
+      "To set requirements for electronic health record software",
+      "To manage hospital billing practices",
+      "To regulate pharmaceutical pricing"
+    ],
+    "correct_index": 0,
+    "difficulty": "medium",
+    "explanation": "The Privacy Rule sets national standards to protect individuals' medical records and personal health information."
+  },
+  {
+    "category": "Security Rule",
+    "question": "Which safeguard category includes encryption and audit controls?",
+    "options": ["Administrative", "Technical", "Physical", "Financial"],
+    "correct_index": 1,
+    "difficulty": "medium",
+    "explanation": "Technical safeguards include encryption, access control, and audit logs to protect ePHI."
+  },
+  {
+    "category": "Breach Notification",
+    "question": "How soon must affected individuals be notified after a breach of unsecured PHI?",
+    "options": ["30 days", "45 days", "60 days", "90 days"],
+    "correct_index": 2,
+    "difficulty": "medium",
+    "explanation": "The Breach Notification Rule requires notification to affected individuals within 60 days of discovery."
+  },
+  {
+    "category": "Business Associates",
+    "question": "Which document must be signed before sharing PHI with a third-party vendor?",
+    "options": ["Service Level Agreement", "Non-Disclosure Agreement", "Business Associate Agreement", "HIPAA Privacy Waiver"],
+    "correct_index": 2,
+    "difficulty": "easy",
+    "explanation": "A Business Associate Agreement (BAA) is required before sharing PHI with a vendor."
+  },
+  {
+    "category": "Access Controls",
+    "question": "What is an essential rule for password management under HIPAA?",
+    "options": [
+      "Passwords should be written down for reference",
+      "Passwords must be changed every 60–90 days",
+      "Passwords can be shared with coworkers",
+      "Passwords can contain only letters"
+    ],
+    "correct_index": 1,
+    "difficulty": "easy",
+    "explanation": "Regular password changes and complexity requirements protect against unauthorized access to ePHI."
+  },
+  {
+    "category": "Patient Rights",
+    "question": "How long does a covered entity have to respond to a patient's request for access to their medical records?",
+    "options": ["7 days", "15 days", "30 days", "60 days"],
+    "correct_index": 2,
+    "difficulty": "medium",
+    "explanation": "Covered entities must respond within 30 days, with one 30-day extension allowed."
+  },
+  {
+    "category": "Violations and Penalties",
+    "question": "What is the maximum annual penalty for willful neglect not corrected?",
+    "options": ["$100,000", "$250,000", "$1.5 million", "$10 million"],
+    "correct_index": 2,
+    "difficulty": "hard",
+    "explanation": "Willful neglect not corrected can result in penalties up to $1.5 million annually."
+  },
+  {
+    "category": "Training Requirements",
+    "question": "When must HIPAA training be completed?",
+    "options": [
+      "Only at hire",
+      "Annually and when policies change",
+      "Every 5 years",
+      "Only after a breach occurs"
+    ],
+    "correct_index": 1,
+    "difficulty": "easy",
+    "explanation": "Employees must complete HIPAA training at hire, annually, and whenever major policy changes occur."
+  },
+  {
+    "category": "Secure Disposal",
+    "question": "Which is a proper method of disposing of electronic PHI?",
+    "options": ["Deleting files", "Data wiping or degaussing", "Quick formatting", "Recycling hard drives"],
+    "correct_index": 1,
+    "difficulty": "medium",
+    "explanation": "Acceptable methods include data wiping, degaussing, or physical destruction."
+  },
+  {
+    "category": "Incidental Disclosures",
+    "question": "Which scenario is considered a permitted incidental disclosure?",
+    "options": [
+      "Discussing patients loudly in public areas",
+      "Patient overhears their name called in a waiting room",
+      "Posting patient information online",
+      "Faxing PHI to a wrong number"
+    ],
+    "correct_index": 1,
+    "difficulty": "medium",
+    "explanation": "A patient hearing their name called in a waiting room is permitted if reasonable safeguards are in place."
+  },
+  {
+    "category": "Privacy Practices Notice",
+    "question": "When must providers distribute the Notice of Privacy Practices (NPP)?",
+    "options": [
+      "Annually",
+      "At first service delivery",
+      "Only upon request",
+      "Within 90 days of enrollment"
+    ],
+    "correct_index": 1,
+    "difficulty": "medium",
+    "explanation": "Providers must distribute the NPP at the time of first service delivery and make it available thereafter."
+  },
+  {
+    "category": "Security Rule",
+    "question": "What are the three types of safeguards required under the Security Rule?",
+    "options": [
+      "Administrative, Physical, and Technical",
+      "Technical, Financial, and Operational",
+      "Legal, Physical, and Administrative",
+      "Personnel, Hardware, and Software"
+    ],
+    "correct_index": 0,
+    "difficulty": "easy",
+    "explanation": "The Security Rule requires administrative, physical, and technical safeguards for ePHI."
+  },
+  {
+    "category": "Breach Notification",
+    "question": "Which agency must be notified of breaches affecting more than 500 individuals?",
+    "options": [
+      "HHS (Department of Health and Human Services)",
+      "CMS (Centers for Medicare & Medicaid Services)",
+      "FBI",
+      "FTC"
+    ],
+    "correct_index": 0,
+    "difficulty": "medium",
+    "explanation": "HHS must be notified within 60 days of discovering a breach affecting 500 or more individuals."
+  },
+  {
+    "category": "Access Controls",
+    "question": "What does RBAC stand for in HIPAA security?",
+    "options": [
+      "Restricted Biometric Access Control",
+      "Role-Based Access Control",
+      "Remote Backup Access Configuration",
+      "Regulated Biometric Authentication Compliance"
+    ],
+    "correct_index": 1,
+    "difficulty": "medium",
+    "explanation": "RBAC ensures users only access PHI necessary for their job role."
+  }
+]
 
