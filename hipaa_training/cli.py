@@ -269,4 +269,3 @@ class CLI:
             )
         except Exception as e:
             self.console.print(f"[red]❌ Report generation failed: {str(e)}[/red]")
-
