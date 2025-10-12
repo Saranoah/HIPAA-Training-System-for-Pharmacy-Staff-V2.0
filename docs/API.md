@@ -4,6 +4,7 @@ This document describes the internal API and module structure of the HIPAA Train
 
 ---
 
+
 ## 📦 Module Structure
 hipaa_training/
 ├── init.py          # Package initialization and exports
