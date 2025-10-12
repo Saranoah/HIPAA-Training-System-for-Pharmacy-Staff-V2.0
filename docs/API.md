@@ -1,486 +1,290 @@
-```bash
-# Install SQLite3
-# Ubuntu/Debian
-sudo apt-get install sqlite3
+markdown# HIPAA Training System V3.0 - API Documentation
 
-# macOS
-brew install sqlite3
-
-# Windows
-# Download from https://www.sqlite.org/download.html
-
-# Or use Python fallback in backup script
-python -c "import sqlite3; import shutil; shutil.copy('data/hipaa_training.db', 'backups/manual_backup.db')"
-```
+This document describes the internal API and module structure of the HIPAA Training System.
 
 ---
 
-### Restore fails: "database disk image is malformed"
-
-**Cause:** Corrupted backup file.
-
-**Solution:**
-```bash
-# Try to repair database
-sqlite3 data/hipaa_training.db ".recover" | sqlite3 recovered.db
-
-# If that fails, restore from earlier backup
-ls -lt backups/
-
-# Use an older backup
-gunzip -c backups/hipaa_training_YYYYMMDD_HHMMSS.db.gz > data/hipaa_training.db
-```
+## 📦 Module Structure
+hipaa_training/
+├── init.py          # Package initialization and exports
+├── cli.py               # Command-line interface
+├── models.py            # Database models and business logic
+├── security.py          # Security and encryption functions
+├── training_engine.py   # Training content delivery
+└── content_manager.py   # Content loading and validation
 
 ---
 
-### Automated backups not running
+## 🔧 Core Modules
 
-**Cause:** Cron job not set up or incorrect path.
+### `models.py`
 
-**Solution:**
-```bash
-# Check cron jobs
-crontab -l
-
-# Add cron job (run daily at 2 AM)
-crontab -e
-
-# Add this line:
-0 2 * * * /full/path/to/scripts/backup_database.sh >> /var/log/hipaa_backup.log 2>&1
-
-# Make script executable
-chmod +x scripts/backup_database.sh
-
-# Test manually
-./scripts/backup_database.sh
-```
-
----
-
-## 🔴 Certificate Issues
-
-### Certificate not being issued after passing quiz
-
-**Cause:** Score calculation error or database issue.
-
-**Solution:**
-```bash
-# Check quiz score in database
-sqlite3 data/hipaa_training.db "SELECT user_id, quiz_score FROM training_progress WHERE quiz_score IS NOT NULL;"
-
-# Manually issue certificate if score is valid
-sqlite3 data/hipaa_training.db << EOF
-INSERT INTO certificates (user_id, certificate_id, score, issue_date, expiry_date)
-VALUES (1, 'manual-cert-$(uuidgen)', 85.0, datetime('now'), datetime('now', '+365 days'));
-EOF
-```
-
----
-
-### Certificate expired but training still valid
-
-**Cause:** System clock issue or training completed >365 days ago.
-
-**Solution:**
-```bash
-# Check certificate expiry
-sqlite3 data/hipaa_training.db "SELECT certificate_id, issue_date, expiry_date FROM certificates WHERE user_id = 1;"
-
-# If training is still valid, extend certificate
-sqlite3 data/hipaa_training.db "UPDATE certificates SET expiry_date = datetime('now', '+365 days') WHERE certificate_id = 'YOUR-CERT-ID';"
-
-# Or issue new certificate
-# User must retake training
-```
-
----
-
-## 🔴 Docker Issues
-
-### Docker build fails: "No such file or directory"
-
-**Cause:** Missing files or incorrect context.
-
-**Solution:**
-```bash
-# Make sure you're in project root
-ls Dockerfile
-
-# Build with proper context
-docker build -t hipaa-training:v3 .
-
-# If still fails, check .dockerignore
-cat .dockerignore
-```
-
----
-
-### Container exits immediately
-
-**Cause:** Missing environment variables.
-
-**Solution:**
-```bash
-# Run with required env vars
-docker run -it --rm \
-  -e HIPAA_ENCRYPTION_KEY="your-key-here" \
-  -e HIPAA_SALT="your-salt-here" \
-  hipaa-training:v3
-
-# Or use docker-compose with .env file
-docker-compose up
-```
-
----
-
-### Can't access database in container
-
-**Cause:** Volume not mounted.
-
-**Solution:**
-```bash
-# Mount data directory as volume
-docker run -it --rm \
-  -e HIPAA_ENCRYPTION_KEY="your-key" \
-  -e HIPAA_SALT="your-salt" \
-  -v $(pwd)/data:/app/data \
-  hipaa-training:v3
-```
-
----
-
-## 🔴 Import Errors
-
-### Error: "cannot import name 'X' from 'hipaa_training'"
-
-**Cause:** Missing import in `__init__.py` or circular import.
-
-**Solution:**
+#### **Config Class**
+Configuration settings loaded from environment variables.
 ```python
-# Check hipaa_training/__init__.py has all exports
-__all__ = [
-    'CLI',
-    'DatabaseManager',
-    'UserManager',
-    'ComplianceDashboard',
-    'SecurityManager',
-    'EnhancedTrainingEngine',
-    'ContentManager'
-]
-
-# Verify import order (avoid circular imports)
-# In __init__.py, import in this order:
-from .security import SecurityManager
-from .models import DatabaseManager, UserManager, ComplianceDashboard
-from .content_manager import ContentManager
-from .training_engine import EnhancedTrainingEngine
-from .cli import CLI
-```
-
----
-
-## 🔴 Platform-Specific Issues
-
-### Windows: "OSError: [WinError 123] The filename, directory name, or volume label syntax is incorrect"
-
-**Cause:** Path separator issues.
-
-**Solution:**
-```python
-# Use os.path.join instead of manual path construction
-import os
-filepath = os.path.join('data', 'hipaa_training.db')
-
-# Or use pathlib
-from pathlib import Path
-filepath = Path('data') / 'hipaa_training.db'
-```
-
----
-
-### Windows: chmod not working
-
-**Cause:** chmod is Unix-only.
-
-**Solution:**
-```python
-# Already fixed in main.py - checks platform
-import platform
-if platform.system() != 'Windows':
-    os.chmod(directory, 0o700)
-```
-
----
-
-### macOS: "Operation not permitted"
-
-**Cause:** macOS security restrictions.
-
-**Solution:**
-```bash
-# Grant terminal full disk access
-# System Preferences > Security & Privacy > Privacy > Full Disk Access
-# Add Terminal.app
-
-# Or run from user directory
-cd ~/Documents/hipaa-training-v3
-python main.py
-```
-
----
-
-## 🔴 CI/CD Issues
-
-### GitHub Actions: "Authentication failed"
-
-**Cause:** Missing or expired GitHub secrets.
-
-**Solution:**
-```bash
-# Add secrets in GitHub repository
-# Settings > Secrets and variables > Actions > New repository secret
-
-# Required secrets:
-# - DOCKER_USERNAME
-# - DOCKER_PASSWORD
-# - CODECOV_TOKEN (optional)
-```
-
----
-
-### CI tests pass but fail on main
-
-**Cause:** Branch protection or merge conflicts.
-
-**Solution:**
-```bash
-# Update your branch
-git checkout main
-git pull origin main
-
-# Rebase your changes
-git checkout your-branch
-git rebase main
-
-# Fix conflicts if any
-git add .
-git rebase --continue
-
-# Push
-git push --force-with-lease
-```
-
----
-
-## 🔴 Common Usage Errors
-
-### "Cannot create user with special characters"
-
-**Cause:** Input sanitization removing characters.
-
-**Solution:**
-- Special characters are preserved in names like "O'Brien" or "José"
-- Truly dangerous characters (HTML/script tags) are escaped
-- If legitimate character is removed, file a bug report
-
----
-
-### Training progress not saving
-
-**Cause:** Database connection issue or improper shutdown.
-
-**Solution:**
-```bash
-# Check database integrity
-sqlite3 data/hipaa_training.db "PRAGMA integrity_check;"
-
-# Check logs for errors
-tail -f logs/hipaa_audit.log
-
-# Verify progress is being recorded
-sqlite3 data/hipaa_training.db "SELECT * FROM training_progress ORDER BY completed_at DESC LIMIT 5;"
-```
-
----
-
-## 🛠️ Debug Mode
-
-Enable debug mode for verbose output:
-
-```bash
-# Run with debug flag
-python main.py --debug
-
-# Or set environment variable
-export DEBUG=true
-python main.py
-```
-
----
-
-## 📊 Health Check
-
-Run the health check script to diagnose issues:
-
-```bash
-python scripts/health_check.py
-```
-
-This checks:
-- ✅ Database integrity
-- ✅ Content files
-- ✅ Directory structure
-- ✅ Environment variables
-- ✅ Dependencies
-- ✅ Audit logs
-
----
-
-## 🔍 Collecting Diagnostic Information
-
-For bug reports, collect this information:
-
-```bash
-# System information
-python --version
-pip list | grep -E "cryptography|rich|pytest"
-uname -a  # Linux/macOS
-systeminfo  # Windows
-
-# Check database
-sqlite3 data/hipaa_training.db ".schema"
-
-# Check logs
-tail -n 100 logs/hipaa_audit.log
-
-# Run health check
-python scripts/health_check.py > health_check_output.txt
-
-# Run tests with verbose output
-pytest tests/ -v --tb=long > test_output.txt 2>&1
-```
-
----
-
-## 📞 Getting Help
-
-If none of these solutions work:
-
-1. **Check GitHub Issues:** https://github.com/Saranoah/HIPAA-Training-System-for-Pharmacy-Staff-V3.0/issues
-
-2. **Create New Issue:** Include:
-   - Python version
-   - Operating system
-   - Complete error message
-   - Output from `python scripts/health_check.py`
-   - Steps to reproduce
-
-3. **Review Documentation:**
-   - README.md
-   - SETUP_GUIDE.md
-   - API.md
-
----
-
-## 🚑 Emergency Recovery
-
-If system is completely broken:
-
-```bash
-# 1. Backup everything
-mkdir emergency_backup
-cp -r data/ evidence/ logs/ emergency_backup/
-
-# 2. Clean install
-rm -rf hipaa_training/__pycache__
-rm -rf data/hipaa_training.db
-rm -rf logs/*
-
-# 3. Reinstall dependencies
-pip uninstall -y cryptography rich pytest
-pip install -r requirements.txt
-
-# 4. Reinitialize
-python main.py --setup-only
-
-# 5. Restore data from backup
-cp emergency_backup/data/hipaa_training.db data/
-
-# 6. Verify
-python scripts/health_check.py
-```
-
----
-
-## 📝 Known Issues
-
-### Issue: Evidence files over 5MB rejected
-**Status:** By design  
-**Workaround:** Compress files or split into smaller chunks
-
-### Issue: No web interface
-**Status:** Planned for V4.0  
-**Workaround:** Use CLI for now
-
-### Issue: Email notifications not sent
-**Status:** Not implemented  
-**Workaround:** Monitor logs manually or implement custom notification
-
----
-
-## ✅ Preventive Measures
-
-To avoid issues:
-
-1. **Regular Backups:**
-   ```bash
-   # Set up automated daily backups
-   crontab -e
-   0 2 * * * /path/to/scripts/backup_database.sh
-   ```
-
-2. **Monitor Logs:**
-   ```bash
-   # Check logs weekly
-   tail -f logs/hipaa_audit.log
-   ```
-
-3. **Test Restores:**
-   ```bash
-   # Test backup restore monthly
-   ./scripts/backup_database.sh
-   # Then restore to test environment
-   ```
-
-4. **Keep Updated:**
-   ```bash
-   git pull origin main
-   pip install -r requirements.txt --upgrade
-   ```
-
-5. **Regular Health Checks:**
-   ```bash
-   # Run weekly
-   python scripts/health_check.py
-   ```
-
----
-
-## 📚 Additional Resources
-
-- **HIPAA Guidance:** https://www.hhs.gov/hipaa
-- **Python Documentation:** https://docs.python.org/3/
-- **SQLite Documentation:** https://www.sqlite.org/docs.html
-- **Cryptography Library:** https://cryptography.io/
-
----
-
-**Last Updated:** 2025-01-11  
-**Version:** 3.0.1
-
-**Still having issues? Create a GitHub issue with detailed information!**
-```
-
----
-
-
+class Config:
+    DB_PATH: str                    # Database file path
+    PASS_THRESHOLD: int             # Quiz passing score (default: 80)
+    TRAINING_EXPIRY_DAYS: int       # Certificate validity (default: 365)
+    AUDIT_RETENTION_YEARS: int      # Log retention period (default: 6)
+    MINI_QUIZ_THRESHOLD: int        # Mini-quiz passing score (default: 70)
+    ENCRYPTION_KEY: str             # Encryption key (REQUIRED)
+Environment Variables:
+
+DB_URL - Database path
+PASS_THRESHOLD - Quiz passing percentage
+TRAINING_EXPIRY_DAYS - Certificate validity in days
+HIPAA_ENCRYPTION_KEY - REQUIRED encryption key
+HIPAA_SALT - Salt for key derivation
+
+
+DatabaseManager Class
+Manages all database operations.
+Methods:
+python__init__(db_path: str = Config.DB_PATH) -> None
+Initialize database connection and create tables.
+pythonsave_progress(user_id: int, lesson_title: str, score: Optional[float], 
+              checklist_data: Optional[Dict]) -> None
+Save training progress for a user.
+Parameters:
+
+user_id - User identifier
+lesson_title - Name of completed lesson
+score - Quiz score (optional)
+checklist_data - Checklist responses (optional)
+
+pythonsave_sensitive_progress(user_id: int, checklist_data: Dict, 
+                        score: Optional[float]) -> None
+Save progress with encrypted sensitive data.
+pythonissue_certificate(user_id: int, score: float) -> str
+Issue a training certificate.
+Returns: Certificate UUID
+pythonget_compliance_stats() -> Dict
+Retrieve compliance statistics for reporting.
+Returns:
+python{
+    "total_users": int,
+    "avg_score": float,
+    "pass_rate": float,
+    "total_certs": int,
+    "active_certs": int,
+    "expired_certs": int
+}
+
+UserManager Class
+Manages user creation and validation.
+Methods:
+pythoncreate_user(username: str, full_name: str, role: str) -> int
+Create a new user.
+Parameters:
+
+username - Unique username (sanitized)
+full_name - User's full name
+role - One of: 'admin', 'staff', 'auditor'
+
+Returns: User ID
+Raises:
+
+ValueError - Invalid role or duplicate username
+
+pythonuser_exists(user_id: int) -> bool
+Check if a user exists.
+pythonget_user(user_id: int) -> Optional[Dict]
+Get user details by ID.
+Returns:
+python{
+    "id": int,
+    "username": str,
+    "full_name": str,
+    "role": str,
+    "created_at": str
+}
+
+ComplianceDashboard Class
+Generates compliance reports.
+Methods:
+pythongenerate_enterprise_report(format_type: str) -> str
+Generate compliance report in CSV or JSON format.
+Parameters:
+
+format_type - Either 'csv' or 'json'
+
+Returns: Generated filename
+Raises:
+
+ValueError - Invalid format type
+
+
+security.py
+SecurityManager Class
+Handles encryption, decryption, and audit logging.
+Methods:
+pythonencrypt_data(data: str) -> str
+Encrypt sensitive string data using Fernet.
+Parameters:
+
+data - Plain text string
+
+Returns: Base64-encoded encrypted string
+pythondecrypt_data(encrypted_data: str) -> str
+Decrypt encrypted string data.
+Parameters:
+
+encrypted_data - Base64-encoded encrypted string
+
+Returns: Plain text string
+pythonencrypt_file(input_path: str, output_path: str) -> None
+Encrypt a file in chunks (memory-efficient for large files).
+Parameters:
+
+input_path - Path to source file
+output_path - Path for encrypted output
+
+pythondecrypt_file(input_path: str, output_path: str) -> None
+Decrypt a file that was encrypted in chunks.
+pythonlog_action(user_id: int, action: str, details: str) -> None
+Log an action to both file and database for HIPAA audit trail.
+Parameters:
+
+user_id - User performing action
+action - Action type (e.g., "USER_CREATED", "QUIZ_COMPLETED")
+details - Additional details about the action
+
+
+training_engine.py
+EnhancedTrainingEngine Class
+Manages training delivery and assessment.
+Methods:
+pythondisplay_lesson(user_id: int, lesson_title: str) -> None
+Display a lesson with formatted output.
+pythonadaptive_quiz(user_id: int) -> float
+Conduct adaptive final quiz with randomized questions.
+Returns: Score as percentage (0-100)
+pythoncomplete_enhanced_checklist(user_id: int) -> None
+Guide user through compliance checklist with evidence upload.
+
+content_manager.py
+ContentManager Class
+Loads and validates training content.
+Attributes:
+pythonlessons: Dict[str, Dict]              # Lesson content
+quiz_questions: List[Dict]            # Quiz questions
+checklist_items: List[Dict]           # Checklist items
+Methods:
+pythonget_lesson(lesson_title: str) -> Dict
+Get a specific lesson by title.
+pythonget_all_lessons() -> List[str]
+Get list of all lesson titles.
+pythonget_quiz_question_count() -> int
+Get total number of quiz questions.
+pythonget_checklist_item_count() -> int
+Get total number of checklist items.
+
+cli.py
+CLI Class
+Command-line interface for the training system.
+Methods:
+pythonrun() -> None
+Main CLI loop - displays menu and handles user input.
+
+🗄️ Database Schema
+users Table
+sqlCREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    full_name TEXT NOT NULL,
+    role TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+training_progress Table
+sqlCREATE TABLE training_progress (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    lesson_title TEXT,
+    quiz_score REAL,
+    checklist_data TEXT,  -- May be encrypted
+    completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
+certificates Table
+sqlCREATE TABLE certificates (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    certificate_id TEXT UNIQUE NOT NULL,
+    score REAL NOT NULL,
+    issue_date TIMESTAMP NOT NULL,
+    expiry_date TIMESTAMP NOT NULL,
+    revoked BOOLEAN DEFAULT FALSE,
+    revoked_at TIMESTAMP,
+    revoked_reason TEXT,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
+audit_log Table
+sqlCREATE TABLE audit_log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    action TEXT NOT NULL,
+    details TEXT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ip_address TEXT,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE SET NULL
+);
+
+🔐 Security Features
+Encryption
+
+Algorithm: Fernet (symmetric encryption)
+Key Derivation: PBKDF2-HMAC-SHA256 with 100,000 iterations
+Data at Rest: Checklist responses, evidence files
+Data in Transit: N/A (CLI application)
+
+Audit Logging
+
+All user actions logged
+Logs retained for 6 years (configurable)
+Dual logging: file + database
+Rotating log files (10MB max, 5 backups)
+
+Access Controls
+
+Role-based access (admin/staff/auditor)
+Input sanitization to prevent injection
+Session management (future enhancement)
+
+
+📊 Usage Examples
+Create a User
+pythonfrom hipaa_training.models import UserManager
+
+manager = UserManager()
+user_id = manager.create_user("jdoe", "John Doe", "staff")
+print(f"Created user ID: {user_id}")
+Encrypt Data
+pythonfrom hipaa_training.security import SecurityManager
+
+security = SecurityManager()
+encrypted = security.encrypt_data("Sensitive PHI")
+decrypted = security.decrypt_data(encrypted)
+assert decrypted == "Sensitive PHI"
+Generate Report
+pythonfrom hipaa_training.models import ComplianceDashboard
+
+dashboard = ComplianceDashboard()
+filename = dashboard.generate_enterprise_report('json')
+print(f"Report saved: {filename}")
+
+🧪 Testing
+Run tests with pytest:
+bashpytest tests/ -v
+pytest tests/ --cov=hipaa_training --cov-report=html
+
+📝 Notes
+
+All methods that access PHI log actions via SecurityManager
+Database uses parameterized queries to prevent SQL injection
+Files are encrypted in 64KB chunks for memory efficiency
+Passwords/keys should never be hardcoded
+
+
+Last Updated: 2025-01-11
+Version: 3.0.1
