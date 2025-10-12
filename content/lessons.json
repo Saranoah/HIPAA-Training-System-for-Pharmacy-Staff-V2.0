@@ -249,4 +249,139 @@
           "Yes, if you empty the recycle bin",
           "Yes, if you format the drive",
           "No, data wiping or physical destruction is required",
-          "
+          "Only if you delete them twice"
+        ],
+        "correct_index": 2
+      }
+    ]
+  },
+  "Access Controls": {
+    "content": "Access controls are security measures that regulate who can view or use resources in a computing or physical environment. Under HIPAA, strict access controls are required for ePHI.\n\nUSER AUTHENTICATION:\n\n1. UNIQUE USER IDs:\n- Each user must have a unique identifier\n- No shared logins or passwords\n- Usernames should not reveal personal information\n\n2. PASSWORD REQUIREMENTS:\n- Minimum 8 characters (12+ recommended)\n- Combination of uppercase, lowercase, numbers, symbols\n- Changed every 60-90 days\n- Cannot reuse last 10 passwords\n- Account lockout after 5 failed attempts\n- Passwords should never be written down or shared\n\n3. MULTI-FACTOR AUTHENTICATION (MFA):\n- Something you know (password)\n- Something you have (token, phone)\n- Something you are (biometric)\n- Required for remote access\n- Strongly recommended for all access\n\nROLE-BASED ACCESS CONTROL (RBAC):\n- Users granted minimum access needed for job function\n- Access based on role, not individual\n- Regular reviews of access rights\n- Immediate revocation upon termination or role change\n\nPHYSICAL ACCESS CONTROLS:\n- Locked doors to areas with PHI\n- Badge access systems\n- Visitor logs and escort requirements\n- Automatic screen locks (after 5-15 minutes of inactivity)\n- Clean desk policy\n- Secure storage for portable devices\n\nAUDIT CONTROLS:\n- Log all access to ePHI (who, what, when)\n- Regular review of access logs\n- Monitoring for suspicious activity\n- Retain logs for at least 6 years\n\nEMERGENCY ACCESS:\n- Procedures for break-glass access in emergencies\n- All emergency access must be logged and reviewed\n- Access should be restricted to minimum necessary",
+    "key_points": [
+      "Each user must have a unique login - no shared accounts",
+      "Passwords must be complex and changed regularly",
+      "Multi-factor authentication required for remote access",
+      "Role-based access control ensures minimum necessary access",
+      "All access to ePHI must be logged and monitored"
+    ],
+    "comprehension_questions": [
+      {
+        "question": "What is the minimum recommended password length?",
+        "options": [
+          "6 characters",
+          "8 characters",
+          "10 characters",
+          "4 characters"
+        ],
+        "correct_index": 1
+      },
+      {
+        "question": "Is it acceptable to share login credentials with a coworker?",
+        "options": [
+          "Yes, if they need urgent access",
+          "Yes, if approved by supervisor",
+          "No, each user must have unique credentials",
+          "Only in emergencies"
+        ],
+        "correct_index": 2
+      }
+    ]
+  },
+  "Privacy Practices Notice": {
+    "content": "The Notice of Privacy Practices (NPP) is a document that covered entities must provide to patients explaining how their PHI may be used and disclosed, and informing them of their rights.\n\nREQUIRED CONTENT:\n\n1. HEADER: \"THIS NOTICE DESCRIBES HOW MEDICAL INFORMATION ABOUT YOU MAY BE USED AND DISCLOSED AND HOW YOU CAN GET ACCESS TO THIS INFORMATION. PLEASE REVIEW IT CAREFULLY.\"\n\n2. USES AND DISCLOSURES:\n- Treatment, payment, and healthcare operations\n- Required by law\n- Public health activities\n- Victims of abuse or neglect\n- Health oversight activities\n- Judicial/administrative proceedings\n- Law enforcement\n- Serious threats to health or safety\n- Research\n- Workers' compensation\n\n3. PATIENT RIGHTS:\n- Right to request restrictions\n- Right to confidential communications\n- Right to inspect and copy\n- Right to amend\n- Right to accounting of disclosures\n- Right to paper copy of notice\n- Right to file a complaint\n\n4. COVERED ENTITY'S DUTIES:\n- Maintain privacy of PHI\n- Provide notice of privacy practices\n- Abide by terms of current notice\n- Notify of breaches\n\n5. CONTACT INFORMATION:\n- Privacy officer contact details\n- How to file complaints\n- Effective date of notice\n\nDISTRIBUTION REQUIREMENTS:\n\n• PROVIDERS WITH DIRECT TREATMENT:\n- Provide at first service delivery\n- Make good faith effort to obtain written acknowledgment\n- Post prominently in facility\n- Make available on website\n\n• HEALTH PLANS:\n- Provide at enrollment\n- Mail to enrollees within 60 days of material change\n- Post on website\n\n• Updates:\n- NPP must be updated whenever material changes are made\n- New version effective on publication date",
+    "key_points": [
+      "NPP must be provided to patients at first service delivery",
+      "Must explain how PHI may be used and disclosed",
+      "Must describe patient rights under HIPAA",
+      "Must be posted prominently and available on website",
+      "Written acknowledgment of receipt should be obtained"
+    ],
+    "comprehension_questions": [
+      {
+        "question": "When must a provider give patients the Notice of Privacy Practices?",
+        "options": [
+          "Within 30 days of first visit",
+          "At first service delivery",
+          "Only upon request",
+          "Annually"
+        ],
+        "correct_index": 1
+      },
+      {
+        "question": "What must be included in the NPP header?",
+        "options": [
+          "The provider's mission statement",
+          "A warning about medical information use",
+          "The Privacy Rule requirements",
+          "Patient billing information"
+        ],
+        "correct_index": 1
+      }
+    ]
+  },
+  "Training Requirements": {
+    "content": "HIPAA requires that all workforce members who handle PHI receive appropriate training on privacy and security policies and procedures.\n\nWHO MUST BE TRAINED:\n\n- All employees (full-time, part-time, temporary)\n- Volunteers\n- Trainees and students\n- Contractors with access to PHI\n- Anyone in the workforce with potential PHI access\n\nTRAINING FREQUENCY:\n\n• INITIAL TRAINING:\n- Must be completed within a reasonable time after hire\n- Before granting access to PHI systems\n- Typically within 30-60 days of hire\n\n• ONGOING TRAINING:\n- Annual refresher training required\n- Training when material changes to policies occur\n- Retraining when deficiencies are identified\n- Training when job responsibilities change\n\nREQUIRED TRAINING TOPICS:\n\n1. What is PHI and ePHI\n2. Privacy Rule requirements\n3. Security Rule requirements\n4. Breach Notification Rule\n5. Organization's specific policies and procedures\n6. Minimum necessary standard\n7. Patient rights\n8. How to report security incidents\n9. Sanctions for violations\n10. Business associate requirements\n11. Secure communication methods\n12. Password security\n13. Physical security\n14. Proper disposal methods\n15. Mobile device security\n\nDOCUMENTATION REQUIREMENTS:\n\nCovered entities must maintain:\n- Training attendance records\n- Training materials and curriculum\n- Date and duration of training\n- Trainer qualifications\n- Assessment results (if applicable)\n- Records must be retained for 6 years\n\nTRAINING METHODS:\n\n✓ In-person classroom training\n✓ Online/computer-based training\n✓ Webinars and video training\n✓ Self-paced modules\n✓ Combination approaches\n\nASSOCIATED REQUIREMENTS:\n\n- Security awareness training (Security Rule)\n- Periodic security reminders\n- Protection from malware\n- Log-in monitoring procedures\n- Password management training",
+    "key_points": [
+      "All workforce members must receive HIPAA training",
+      "Training required at hire, annually, and when policies change",
+      "Training must cover Privacy Rule, Security Rule, and organizational policies",
+      "Documentation of training must be retained for 6 years",
+      "Failure to train workforce is a common HIPAA violation"
+    ],
+    "comprehension_questions": [
+      {
+        "question": "How often must HIPAA training be completed?",
+        "options": [
+          "One time only at hire",
+          "Annually and when policies change",
+          "Every 5 years",
+          "Only when HHS requires it"
+        ],
+        "correct_index": 1
+      },
+      {
+        "question": "Who must receive HIPAA training?",
+        "options": [
+          "Only doctors and nurses",
+          "Only employees who directly handle PHI",
+          "All workforce members with potential PHI access",
+          "Only administrative staff"
+        ],
+        "correct_index": 2
+      }
+    ]
+  },
+  "Incidental Disclosures": {
+    "content": "Incidental disclosures are secondary uses or disclosures of PHI that cannot reasonably be prevented, are limited in nature, and occur as a byproduct of an otherwise permitted use or disclosure.\n\nWHAT ARE INCIDENTAL DISCLOSURES?\n\nIncidental disclosures are unintentional, limited disclosures that may occur even when reasonable safeguards are in place. They are permitted under HIPAA if:\n\n1. The covered entity has implemented reasonable safeguards\n2. The minimum necessary standard is applied\n3. The disclosure is a byproduct of a permitted activity\n\nPERMITTED INCIDENTAL DISCLOSURES:\n\n✓ Healthcare provider discusses patient's condition with another provider in a joint treatment area, and other patients overhear\n✓ Receptionist calls out patient names in a waiting room\n✓ Nurse discusses patient case at nurses' station and is overheard\n✓ Patient information visible on computer screens in normal course of treatment\n✓ Prescription pickup area where others may be present\n✓ Hospital room signs with patient names\n✓ X-rays displayed on light boards for treatment purposes\n\nNOT PERMITTED (These are violations, not incidental):\n\n✗ Discussing patients loudly in public areas (cafeteria, elevator)\n✗ Leaving patient charts openly displayed in public areas\n✗ Failing to log off computers in high-traffic areas\n✗ Discussing patients with friends or family\n✗ Posting about patients on social media\n✗ Leaving voicemails with detailed medical information\n✗ Faxing PHI to wrong number without safeguards\n✗ Mailing PHI to wrong address due to negligence\n\nREASONABLE SAFEGUARDS TO MINIMIZE INCIDENTAL DISCLOSURES:\n\n• Speak quietly when discussing patient information\n• Use privacy screens on computer monitors\n• Position computer screens away from public view\n• Use private rooms for sensitive discussions\n• Implement automatic screen locks\n• Train staff on maintaining confidentiality\n• Post signs reminding staff to protect privacy\n• Use sign-in sheets instead of calling names (where feasible)\n• Implement privacy glass or walls at check-in areas\n• Use secure messaging instead of overhead paging\n• Minimize information on whiteboards in patient rooms\n\nKEY PRINCIPLE: The test is whether reasonable safeguards were in place, not whether the disclosure occurred. If you've implemented appropriate measures, unavoidable incidental disclosures during normal operations are acceptable.",
+    "key_points": [
+      "Incidental disclosures are unintentional byproducts of permitted activities",
+      "They are allowed if reasonable safeguards are in place",
+      "Minimum necessary standard must still be applied",
+      "Examples: overhearing conversations in treatment areas, visible computer screens",
+      "Preventable disclosures due to negligence are NOT incidental"
+    ],
+    "comprehension_questions": [
+      {
+        "question": "Which is an example of a permitted incidental disclosure?",
+        "options": [
+          "Posting about a patient on social media",
+          "A patient overhears their name called in a waiting room",
+          "Discussing patients loudly in a cafeteria",
+          "Leaving patient charts on a public desk"
+        ],
+        "correct_index": 1
+      },
+      {
+        "question": "Are incidental disclosures HIPAA violations?",
+        "options": [
+          "Yes, all disclosures not authorized are violations",
+          "No, if reasonable safeguards are in place",
+          "Only if they involve more than 500 people",
+          "Only if reported to HHS"
+        ],
+        "correct_index": 1
+      }
+    ]
+  },
+  "Patient Request Procedures": {
+    "content": "Patients have specific rights under HIPAA to make requests regarding their health information. Covered entities must have procedures in place to handle these requests.\n\n1. REQUEST FOR ACCESS (RIGHT TO VIEW/OBTAIN RECORDS):\n\nTimeline:\n- 30 days to provide access or denial\n- One 30-day extension allowed if unable to act within initial 30 days\n\nRequirements:\n- Can request electronic or paper format\n- If requested in electronic format, must provide in that format if readily producible\n- Can charge reasonable, cost-based fee (labor for copying, supplies, postage)\n- Cannot charge for search, retrieval, or review\n\nReasons for denial:\n- Psychotherapy notes\n- Information compiled for legal proceedings\n- Information subject to Clinical Laboratory Improvements Amendments (CLIA)\n- When access would endanger patient or another person (reviewable denial)\n- Correctional institutions (in certain circumstances)\n\n2. REQUEST TO AMEND RECORDS:\n\nTimeline:\n- 60 days to accept or deny\n- One 30-day extension allowed\n\nRequirements:\n- Patient must identify record and reason for amendment\n- If accepted, must make amendment and inform relevant parties\n- If denied, patient can submit statement of disagreement\
