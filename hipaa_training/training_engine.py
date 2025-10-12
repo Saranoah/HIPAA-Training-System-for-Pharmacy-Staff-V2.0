@@ -1,4 +1,5 @@
 # hipaa_training/training_engine.py
+
 import os
 import random
 from datetime import datetime
@@ -12,7 +13,7 @@ from .content_manager import ContentManager
 
 class EnhancedTrainingEngine:
     """
-    Main training engine for HIPAA compliance training
+    Main training engine for HIPAA compliance training.
 
     FIXES APPLIED:
     - Fixed quiz randomization bug
@@ -30,7 +31,7 @@ class EnhancedTrainingEngine:
         self.checklist = {}
 
     def display_lesson(self, user_id: int, lesson_title: str) -> None:
-        """Display a lesson with formatted output"""
+        """Display a lesson with formatted output."""
         lesson = self.content.lessons.get(lesson_title)
         if not lesson:
             self.console.print(f"[red]Lesson '{lesson_title}' not found.[/red]")
@@ -54,7 +55,7 @@ class EnhancedTrainingEngine:
         input("\n[dim]Press Enter to continue...[/dim]")
 
     def _mini_quiz(self, lesson: dict) -> bool:
-        """Conduct a mini-quiz for lesson comprehension"""
+        """Conduct a mini-quiz for lesson comprehension."""
         questions = lesson.get("comprehension_questions", [])
         if not questions:
             return True
@@ -99,7 +100,7 @@ class EnhancedTrainingEngine:
         return passed
 
     def adaptive_quiz(self, user_id: int) -> float:
-        """Conduct adaptive final quiz with randomized questions"""
+        """Conduct adaptive final quiz with randomized questions."""
         num_questions = min(15, len(self.content.quiz_questions))
         questions = random.sample(self.content.quiz_questions, num_questions)
         correct = 0
@@ -169,11 +170,15 @@ class EnhancedTrainingEngine:
             )
 
         self.db.save_sensitive_progress(user_id, answers, score)
-        self.security.log_action(user_id, "QUIZ_COMPLETED", f"Score: {score:.1f}%")
+        self.security.log_action(
+            user_id,
+            "QUIZ_COMPLETED",
+            f"Score: {score:.1f}%",
+        )
         return score
 
     def complete_enhanced_checklist(self, user_id: int) -> None:
-        """Enhanced compliance checklist with evidence file upload"""
+        """Enhanced compliance checklist with evidence file upload."""
         self.console.print(
             Panel(
                 "[bold cyan]HIPAA Compliance Checklist[/bold cyan]\n"
@@ -228,8 +233,8 @@ class EnhancedTrainingEngine:
                     file_size = os.path.getsize(evidence_input)
                     if file_size > 5 * 1024 * 1024:
                         self.console.print(
-                            f"[red]❌ File too large ({file_size / 1024 / 1024:.1f}MB). "
-                            "Must be <5MB[/red]"
+                            f"[red]❌ File too large "
+                            f"({file_size / 1024 / 1024:.1f}MB). Must be <5MB[/red]"
                         )
                         continue
 
@@ -252,39 +257,26 @@ class EnhancedTrainingEngine:
 
                     try:
                         self.security.encrypt_file(evidence_input, dest_path)
-                        self.console.print(
-                            f"[green]✅ Evidence saved: {filename}[/green]"
-                        )
+                        self.console.print(f"[green]✅ Evidence saved: {filename}[/green]")
                         evidence_path = filename
                         break
                     except Exception as e:
-                        self.console.print(
-                            f"[red]❌ Failed to save evidence: {str(e)}[/red]"
-                        )
+                        self.console.print(f"[red]❌ Failed to save evidence: {str(e)}[/red]")
                         continue
 
             self.checklist[text] = completed
-            log_details = (
-                f"Item: {text}, Response: "
-                f"{'Completed' if completed else 'Not Completed'}"
-            )
+            log_details = f"Item: {text}, Response: {'Completed' if completed else 'Not Completed'}"
             if evidence_path:
                 log_details += f", Evidence: {evidence_path}"
-            self.security.log_action(
-                user_id, "CHECKLIST_ITEM_COMPLETED", log_details
-            )
+            self.security.log_action(user_id, "CHECKLIST_ITEM_COMPLETED", log_details)
 
         completed_count = sum(1 for v in self.checklist.values() if v)
         total_count = len(self.checklist)
-        completion_rate = (
-            (completed_count / total_count * 100) if total_count > 0 else 0
-        )
-
+        completion_rate = (completed_count / total_count * 100) if total_count > 0 else 0
         self.console.print(
             Panel(
                 f"[bold green]✅ Checklist Completed![/bold green]\n"
-                f"Completed: {completed_count}/{total_count} "
-                f"({completion_rate:.1f}%)",
+                f"Completed: {completed_count}/{total_count} ({completion_rate:.1f}%)",
                 border_style="green",
             )
         )
