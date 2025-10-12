@@ -145,6 +145,7 @@ class EnhancedTrainingEngine:
                 self.console.print("[green]✓ Correct![/green]")
                 correct += 1
             else:
+                # Keep explanation separate to avoid long single lines
                 self.console.print(f"[red]✗ Incorrect.[/red] {q['explanation']}")
 
         score = (correct / len(questions)) * 100
@@ -170,6 +171,7 @@ class EnhancedTrainingEngine:
             )
 
         self.db.save_sensitive_progress(user_id, answers, score)
+        # split this call across multiple lines to ensure it stays short
         self.security.log_action(
             user_id,
             "QUIZ_COMPLETED",
@@ -218,8 +220,10 @@ class EnhancedTrainingEngine:
                         evidence_input = os.path.abspath(evidence_input)
                         current_dir = os.getcwd()
                         if not evidence_input.startswith(current_dir):
+                            # break the long message into adjacent strings
                             self.console.print(
-                                "[red]❌ Security error: File must be in current directory tree[/red]"
+                                "[red]❌ Security error: "
+                                "File must be in current directory tree[/red]"
                             )
                             continue
                     except Exception:
@@ -247,8 +251,8 @@ class EnhancedTrainingEngine:
 
                     evidence_dir = f"evidence/user_{user_id}"
                     os.makedirs(evidence_dir, exist_ok=True)
-                    safe_text = "".join(
-                        c for c in text if c.isalnum() or c in (" ", "_")
+                    safe_text = (
+                        "".join(c for c in text if c.isalnum() or c in (" ", "_"))
                     )[:30].strip().replace(" ", "_")
                     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                     file_ext = os.path.splitext(evidence_input)[1]
@@ -261,11 +265,16 @@ class EnhancedTrainingEngine:
                         evidence_path = filename
                         break
                     except Exception as e:
-                        self.console.print(f"[red]❌ Failed to save evidence: {str(e)}[/red]")
+                        self.console.print(
+                            f"[red]❌ Failed to save evidence: {str(e)}[/red]"
+                        )
                         continue
 
             self.checklist[text] = completed
-            log_details = f"Item: {text}, Response: {'Completed' if completed else 'Not Completed'}"
+            log_details = (
+                f"Item: {text}, Response: "
+                f"{'Completed' if completed else 'Not Completed'}"
+            )
             if evidence_path:
                 log_details += f", Evidence: {evidence_path}"
             self.security.log_action(user_id, "CHECKLIST_ITEM_COMPLETED", log_details)
