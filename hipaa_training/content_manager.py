@@ -297,3 +297,68 @@ class ContentManager:
                     "validation_hint": "Verify contracts with all vendors"
                 },
                 {
+                    "text": "Notice of Privacy Practices (NPP) provided to patients",
+                    "category": "Compliance",
+                    "validation_hint": "Confirm patient acknowledgment forms"
+                }
+            ]
+        
+        else:
+            return {}
+
+    def _validate_content(self) -> None:
+        """Validate loaded content structure"""
+        # Validate lessons
+        if not isinstance(self.lessons, dict):
+            raise ValueError("lessons.json must contain a dictionary")
+        
+        for lesson_name, lesson_data in self.lessons.items():
+            if not isinstance(lesson_data, dict):
+                raise ValueError(f"Lesson '{lesson_name}' must be a dictionary")
+            
+            required_keys = ['content', 'key_points']
+            for key in required_keys:
+                if key not in lesson_data:
+                    raise ValueError(f"Lesson '{lesson_name}' missing required key: {key}")
+        
+        # Validate quiz questions
+        if not isinstance(self.quiz_questions, list):
+            raise ValueError("quiz_questions.json must contain a list")
+        
+        for idx, question in enumerate(self.quiz_questions):
+            required_keys = ['question', 'options', 'correct_index', 'explanation']
+            for key in required_keys:
+                if key not in question:
+                    raise ValueError(f"Quiz question {idx} missing required key: {key}")
+            
+            if not isinstance(question['options'], list) or len(question['options']) < 2:
+                raise ValueError(f"Quiz question {idx} must have at least 2 options")
+            
+            if not 0 <= question['correct_index'] < len(question['options']):
+                raise ValueError(f"Quiz question {idx} has invalid correct_index")
+        
+        # Validate checklist
+        if not isinstance(self.checklist_items, list):
+            raise ValueError("checklist_items.json must contain a list")
+        
+        for idx, item in enumerate(self.checklist_items):
+            required_keys = ['text', 'category']
+            for key in required_keys:
+                if key not in item:
+                    raise ValueError(f"Checklist item {idx} missing required key: {key}")
+
+    def get_lesson(self, lesson_title: str) -> Dict:
+        """Get a specific lesson by title"""
+        return self.lessons.get(lesson_title, {})
+
+    def get_all_lessons(self) -> List[str]:
+        """Get list of all lesson titles"""
+        return list(self.lessons.keys())
+
+    def get_quiz_question_count(self) -> int:
+        """Get total number of quiz questions"""
+        return len(self.quiz_questions)
+
+    def get_checklist_item_count(self) -> int:
+        """Get total number of checklist items"""
+        return len(self.checklist_items)
