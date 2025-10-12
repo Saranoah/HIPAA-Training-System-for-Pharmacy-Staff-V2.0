@@ -21,8 +21,8 @@ class Config:
     if not ENCRYPTION_KEY:
         raise ValueError(
             "CRITICAL: HIPAA_ENCRYPTION_KEY environment variable must be set! "
-            "Generate a secure key with:\n"
-            "python -c 'import secrets; print(secrets.token_urlsafe(32))'"
+            "Generate a secure key with: python -c "
+            "'import secrets; print(secrets.token_urlsafe(32))'"
         )
 
 
@@ -95,21 +95,11 @@ class DatabaseManager:
             )
 
             # Indexes for performance
-            conn.execute(
-                "CREATE INDEX IF NOT EXISTS idx_user_id ON training_progress(user_id)"
-            )
-            conn.execute(
-                "CREATE INDEX IF NOT EXISTS idx_cert_user ON certificates(user_id)"
-            )
-            conn.execute(
-                "CREATE INDEX IF NOT EXISTS idx_cert_expiry ON certificates(expiry_date)"
-            )
-            conn.execute(
-                "CREATE INDEX IF NOT EXISTS idx_audit_user ON audit_log(user_id)"
-            )
-            conn.execute(
-                "CREATE INDEX IF NOT EXISTS idx_audit_timestamp ON audit_log(timestamp)"
-            )
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_user_id ON training_progress(user_id)")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_cert_user ON certificates(user_id)")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_cert_expiry ON certificates(expiry_date)")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_audit_user ON audit_log(user_id)")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_audit_timestamp ON audit_log(timestamp)")
 
     @contextmanager
     def _get_connection(self):
@@ -130,9 +120,8 @@ class DatabaseManager:
         with self._get_connection() as conn:
             conn.execute(
                 """
-                INSERT INTO training_progress (
-                    user_id, lesson_title, quiz_score, checklist_data, completed_at
-                ) VALUES (?, ?, ?, ?, ?)
+                INSERT INTO training_progress (user_id, lesson_title, quiz_score, checklist_data, completed_at)
+                VALUES (?, ?, ?, ?, ?)
                 """,
                 (
                     user_id,
@@ -150,15 +139,12 @@ class DatabaseManager:
         with self._get_connection() as conn:
             conn.execute(
                 """
-                INSERT INTO training_progress (
-                    user_id, quiz_score, checklist_data, completed_at
-                ) VALUES (?, ?, ?, ?)
+                INSERT INTO training_progress (user_id, quiz_score, checklist_data, completed_at)
+                VALUES (?, ?, ?, ?)
                 """,
                 (user_id, score, encrypted_checklist, datetime.now()),
             )
-            self.security.log_action(
-                user_id, "SENSITIVE_PROGRESS_SAVED", "Checklist completed"
-            )
+            self.security.log_action(user_id, "SENSITIVE_PROGRESS_SAVED", "Checklist completed")
 
     def issue_certificate(self, user_id: int, score: float) -> str:
         """Issue a training certificate with expiry tracking"""
@@ -171,19 +157,15 @@ class DatabaseManager:
         with self._get_connection() as conn:
             conn.execute(
                 """
-                INSERT INTO certificates (
-                    user_id, certificate_id, score, issue_date, expiry_date
-                ) VALUES (?, ?, ?, ?, ?)
+                INSERT INTO certificates (user_id, certificate_id, score, issue_date, expiry_date)
+                VALUES (?, ?, ?, ?, ?)
                 """,
                 (user_id, certificate_id, score, issue_date, expiry_date),
             )
             self.security.log_action(
                 user_id,
                 "CERTIFICATE_ISSUED",
-                (
-                    f"Certificate ID: {certificate_id}, Score: {score}%, "
-                    f"Expires: {expiry_date.date()}"
-                ),
+                f"Certificate ID: {certificate_id}, Score: {score}%, Expires: {expiry_date.date()}",
             )
         return certificate_id
 
@@ -193,7 +175,7 @@ class DatabaseManager:
             user_stats = conn.execute(
                 """
                 SELECT COUNT(*) as total_users, AVG(quiz_score) as avg_score,
-                SUM(CASE WHEN quiz_score >= ? THEN 1 ELSE 0 END) * 100.0 /
+                SUM(CASE WHEN quiz_score >= ? THEN 1 ELSE 0 END) * 100.0 / 
                 NULLIF(COUNT(*), 0) as pass_rate
                 FROM training_progress WHERE quiz_score IS NOT NULL
                 """,
@@ -203,9 +185,7 @@ class DatabaseManager:
             cert_stats = conn.execute(
                 """
                 SELECT COUNT(*) as total_certs,
-                SUM(
-                    CASE WHEN expiry_date > ? AND revoked = FALSE THEN 1 ELSE 0 END
-                ) as active_certs,
+                SUM(CASE WHEN expiry_date > ? AND revoked = FALSE THEN 1 ELSE 0 END) as active_certs,
                 SUM(CASE WHEN expiry_date <= ? THEN 1 ELSE 0 END) as expired_certs
                 FROM certificates
                 """,
@@ -275,19 +255,14 @@ class UserManager:
     def user_exists(self, user_id: int) -> bool:
         """Check if user exists in database"""
         with self.db._get_connection() as conn:
-            result = conn.execute(
-                "SELECT 1 FROM users WHERE id = ?", (user_id,)
-            ).fetchone()
+            result = conn.execute("SELECT 1 FROM users WHERE id = ?", (user_id,)).fetchone()
             return bool(result)
 
     def get_user(self, user_id: int):
         """Get user details by ID"""
         with self.db._get_connection() as conn:
             result = conn.execute(
-                """
-                SELECT id, username, full_name, role, created_at
-                FROM users WHERE id = ?
-                """,
+                "SELECT id, username, full_name, role, created_at FROM users WHERE id = ?",
                 (user_id,),
             ).fetchone()
             if result:
@@ -322,4 +297,4 @@ class ComplianceDashboard:
             with open(filename, "w", encoding="utf-8") as f:
                 json.dump(stats, f, indent=2, ensure_ascii=False)
 
-        return filename
+        return filename 
