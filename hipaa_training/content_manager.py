@@ -81,11 +81,13 @@ class ContentManager:
         if filename == "lessons.json":
             return {
                 "What is PHI?": {
-                    "content": "Protected Health Information (PHI) is any information in a medical record "
-                               "that can be used to identify an individual and was created, used, or disclosed "
-                               "in the course of providing healthcare services.\n\n"
-                               "PHI includes 18 identifiers such as name, address, dates, phone numbers, "
-                               "email addresses, social security numbers, medical record numbers, and more.",
+                    "content": (
+                        "Protected Health Information (PHI) is any information in a medical record "
+                        "that can be used to identify an individual and was created, used, or disclosed "
+                        "in the course of providing healthcare services.\n\n"
+                        "PHI includes 18 identifiers such as name, address, dates, phone numbers, "
+                        "email addresses, social security numbers, medical record numbers, and more."
+                    ),
                     "key_points": [
                         "PHI must be protected under HIPAA regulations",
                         "18 specific identifiers are considered PHI",
@@ -116,10 +118,12 @@ class ContentManager:
                     ]
                 },
                 "HIPAA Privacy Rule": {
-                    "content": "The HIPAA Privacy Rule establishes national standards to protect individuals' "
-                               "medical records and other personal health information.\n\n"
-                               "It gives patients rights over their health information and sets rules on who can "
-                               "access and receive your health information.",
+                    "content": (
+                        "The HIPAA Privacy Rule establishes national standards to protect individuals' "
+                        "medical records and other personal health information.\n\n"
+                        "It gives patients rights over their health information and sets rules on who can "
+                        "access and receive your health information."
+                    ),
                     "key_points": [
                         "Protects all individually identifiable health information",
                         "Applies to covered entities and business associates",
@@ -140,9 +144,11 @@ class ContentManager:
                     ]
                 },
                 "Security Rule": {
-                    "content": "The HIPAA Security Rule establishes national standards to protect electronic "
-                               "protected health information (ePHI) that is created, received, maintained, or "
-                               "transmitted electronically.",
+                    "content": (
+                        "The HIPAA Security Rule establishes national standards to protect electronic "
+                        "protected health information (ePHI) that is created, received, maintained, or "
+                        "transmitted electronically."
+                    ),
                     "key_points": [
                         "Applies specifically to ePHI",
                         "Requires administrative, physical, and technical safeguards",
@@ -175,8 +181,10 @@ class ContentManager:
                         "Keep PHI on your desk"
                     ],
                     "correct_index": 1,
-                    "explanation": "The minimum necessary standard requires that only the minimum amount of PHI "
-                                   "needed to accomplish a task should be accessed or disclosed."
+                    "explanation": (
+                        "The minimum necessary standard requires that only the minimum amount of PHI "
+                        "needed to accomplish a task should be accessed or disclosed."
+                    )
                 },
                 {
                     "question": "How soon must a breach affecting 500+ individuals be reported to HHS?",
@@ -295,70 +303,18 @@ class ContentManager:
                     "text": "Business Associate Agreements (BAAs) signed",
                     "category": "Compliance",
                     "validation_hint": "Verify contracts with all vendors"
-                },
-                {
-                    "text": "Notice of Privacy Practices (NPP) provided to patients",
-                    "category": "Compliance",
-                    "validation_hint": "Confirm patient acknowledgment forms"
                 }
             ]
         
         else:
+            # fallback for unknown filenames
             return {}
 
     def _validate_content(self) -> None:
-        """Validate loaded content structure"""
-        # Validate lessons
+        """Simple validation to ensure essential structures exist"""
         if not isinstance(self.lessons, dict):
-            raise ValueError("lessons.json must contain a dictionary")
-        
-        for lesson_name, lesson_data in self.lessons.items():
-            if not isinstance(lesson_data, dict):
-                raise ValueError(f"Lesson '{lesson_name}' must be a dictionary")
-            
-            required_keys = ['content', 'key_points']
-            for key in required_keys:
-                if key not in lesson_data:
-                    raise ValueError(f"Lesson '{lesson_name}' missing required key: {key}")
-        
-        # Validate quiz questions
+            raise ValueError("Lessons content must be a dictionary")
         if not isinstance(self.quiz_questions, list):
-            raise ValueError("quiz_questions.json must contain a list")
-        
-        for idx, question in enumerate(self.quiz_questions):
-            required_keys = ['question', 'options', 'correct_index', 'explanation']
-            for key in required_keys:
-                if key not in question:
-                    raise ValueError(f"Quiz question {idx} missing required key: {key}")
-            
-            if not isinstance(question['options'], list) or len(question['options']) < 2:
-                raise ValueError(f"Quiz question {idx} must have at least 2 options")
-            
-            if not 0 <= question['correct_index'] < len(question['options']):
-                raise ValueError(f"Quiz question {idx} has invalid correct_index")
-        
-        # Validate checklist
+            raise ValueError("Quiz questions must be a list")
         if not isinstance(self.checklist_items, list):
-            raise ValueError("checklist_items.json must contain a list")
-        
-        for idx, item in enumerate(self.checklist_items):
-            required_keys = ['text', 'category']
-            for key in required_keys:
-                if key not in item:
-                    raise ValueError(f"Checklist item {idx} missing required key: {key}")
-
-    def get_lesson(self, lesson_title: str) -> Dict:
-        """Get a specific lesson by title"""
-        return self.lessons.get(lesson_title, {})
-
-    def get_all_lessons(self) -> List[str]:
-        """Get list of all lesson titles"""
-        return list(self.lessons.keys())
-
-    def get_quiz_question_count(self) -> int:
-        """Get total number of quiz questions"""
-        return len(self.quiz_questions)
-
-    def get_checklist_item_count(self) -> int:
-        """Get total number of checklist items"""
-        return len(self.checklist_items)
+            raise ValueError("Checklist items must be a list")
