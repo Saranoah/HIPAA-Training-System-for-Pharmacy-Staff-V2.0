@@ -83,7 +83,9 @@ class EnhancedTrainingEngine:
                 self.console.print("[green]✓ Correct![/green]")
                 correct += 1
             else:
-                self.console.print(f"[red]✗ Incorrect.[/red] Correct answer: {correct_option_text}")
+                self.console.print(
+                    f"[red]✗ Incorrect.[/red] Correct answer: {correct_option_text}"
+                )
 
         score = (correct / total) * 100
         passed = score >= Config.MINI_QUIZ_THRESHOLD
@@ -113,7 +115,9 @@ class EnhancedTrainingEngine:
         )
 
         for idx, q in enumerate(questions, 1):
-            self.console.print(f"\n[bold]Question {idx}/{num_questions}: {q['question']}[/bold]")
+            self.console.print(
+                f"\n[bold]Question {idx}/{num_questions}: {q['question']}[/bold]"
+            )
             options = q["options"].copy()
             correct_option_text = q["options"][q["correct_index"]]
             random.shuffle(options)
@@ -195,7 +199,8 @@ class EnhancedTrainingEngine:
             evidence_path = None
 
             if completed and any(
-                keyword in validation_hint.lower() for keyword in ["upload", "file", "document"]
+                keyword in validation_hint.lower()
+                for keyword in ["upload", "file", "document"]
             ):
                 while True:
                     evidence_input = input(
@@ -223,13 +228,16 @@ class EnhancedTrainingEngine:
                     file_size = os.path.getsize(evidence_input)
                     if file_size > 5 * 1024 * 1024:
                         self.console.print(
-                            f"[red]❌ File too large ({file_size / 1024 / 1024:.1f}MB). Must be <5MB[/red]"
+                            f"[red]❌ File too large ({file_size / 1024 / 1024:.1f}MB). "
+                            "Must be <5MB[/red]"
                         )
                         continue
 
                     allowed_extensions = (".pdf", ".jpg", ".jpeg", ".png")
                     if not evidence_input.lower().endswith(allowed_extensions):
-                        self.console.print("[red]❌ Invalid file type. Use PDF, JPG, or PNG[/red]")
+                        self.console.print(
+                            "[red]❌ Invalid file type. Use PDF, JPG, or PNG[/red]"
+                        )
                         continue
 
                     evidence_dir = f"evidence/user_{user_id}"
@@ -244,26 +252,39 @@ class EnhancedTrainingEngine:
 
                     try:
                         self.security.encrypt_file(evidence_input, dest_path)
-                        self.console.print(f"[green]✅ Evidence saved: {filename}[/green]")
+                        self.console.print(
+                            f"[green]✅ Evidence saved: {filename}[/green]"
+                        )
                         evidence_path = filename
                         break
                     except Exception as e:
-                        self.console.print(f"[red]❌ Failed to save evidence: {str(e)}[/red]")
+                        self.console.print(
+                            f"[red]❌ Failed to save evidence: {str(e)}[/red]"
+                        )
                         continue
 
             self.checklist[text] = completed
-            log_details = f"Item: {text}, Response: {'Completed' if completed else 'Not Completed'}"
+            log_details = (
+                f"Item: {text}, Response: "
+                f"{'Completed' if completed else 'Not Completed'}"
+            )
             if evidence_path:
                 log_details += f", Evidence: {evidence_path}"
-            self.security.log_action(user_id, "CHECKLIST_ITEM_COMPLETED", log_details)
+            self.security.log_action(
+                user_id, "CHECKLIST_ITEM_COMPLETED", log_details
+            )
 
         completed_count = sum(1 for v in self.checklist.values() if v)
         total_count = len(self.checklist)
-        completion_rate = (completed_count / total_count * 100) if total_count > 0 else 0
+        completion_rate = (
+            (completed_count / total_count * 100) if total_count > 0 else 0
+        )
+
         self.console.print(
             Panel(
                 f"[bold green]✅ Checklist Completed![/bold green]\n"
-                f"Completed: {completed_count}/{total_count} ({completion_rate:.1f}%)",
+                f"Completed: {completed_count}/{total_count} "
+                f"({completion_rate:.1f}%)",
                 border_style="green",
             )
         )
