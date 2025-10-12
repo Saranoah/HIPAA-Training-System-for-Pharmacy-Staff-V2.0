@@ -114,10 +114,12 @@ class CLI:
 
             self.console.print(
                 Panel(
-                    f"[green]✅ User created successfully![/green]\n\n"
-                    f"User ID: {user_id}\n"
-                    f"Username: {username}\n"
-                    f"Role: {role}",
+                    (
+                        f"[green]✅ User created successfully![/green]\n\n"
+                        f"User ID: {user_id}\n"
+                        f"Username: {username}\n"
+                        f"Role: {role}"
+                    ),
                     border_style="green",
                 )
             )
@@ -144,23 +146,35 @@ class CLI:
 
         user = self.user_manager.get_user(user_id)
         if user:
-            self.console.print(f"\n[green]✓ User found: {user['full_name']} ({user['role']})[/green]\n")
+            self.console.print(
+                f"\n[green]✓ User found: {user['full_name']} ({user['role']})[/green]\n"
+            )
 
         try:
             lessons = list(self.training_engine.content.lessons.keys())
-            self.console.print(f"[cyan]Starting training with {len(lessons)} lessons...[/cyan]\n")
+            self.console.print(
+                f"[cyan]Starting training with {len(lessons)} lessons...[/cyan]\n"
+            )
 
             for idx, lesson in enumerate(lessons, 1):
                 self.console.print(f"\n[bold]Lesson {idx}/{len(lessons)}[/bold]")
                 self.training_engine.display_lesson(user_id, lesson)
 
-                if not self.training_engine._mini_quiz(self.training_engine.content.lessons[lesson]):
-                    self.console.print("[red]❌ Failed comprehension quiz. Please review the lesson.[/red]")
+                if not self.training_engine._mini_quiz(
+                    self.training_engine.content.lessons[lesson]
+                ):
+                    self.console.print(
+                        "[red]❌ Failed comprehension quiz. Please review the lesson.[/red]"
+                    )
                     retry = input("Retry lesson? (yes/no): ").strip().lower()
                     if retry in ["yes", "y"]:
                         self.training_engine.display_lesson(user_id, lesson)
-                        if not self.training_engine._mini_quiz(self.training_engine.content.lessons[lesson]):
-                            self.console.print("[red]❌ Failed again. Moving to next lesson.[/red]")
+                        if not self.training_engine._mini_quiz(
+                            self.training_engine.content.lessons[lesson]
+                        ):
+                            self.console.print(
+                                "[red]❌ Failed again. Moving to next lesson.[/red]"
+                            )
                     continue
 
                 self.db.save_progress(user_id, lesson, None, None)
@@ -176,11 +190,13 @@ class CLI:
                 certificate_id = self.db.issue_certificate(user_id, score)
                 self.console.print(
                     Panel(
-                        f"[bold green]🎉 Congratulations![/bold green]\n\n"
-                        f"Training completed successfully!\n"
-                        f"Final Score: {score:.1f}%\n"
-                        f"Certificate ID: {certificate_id}\n\n"
-                        f"Your certificate is valid for {Config.TRAINING_EXPIRY_DAYS} days",
+                        (
+                            f"[bold green]🎉 Congratulations![/bold green]\n\n"
+                            f"Training completed successfully!\n"
+                            f"Final Score: {score:.1f}%\n"
+                            f"Certificate ID: {certificate_id}\n\n"
+                            f"Your certificate is valid for {Config.TRAINING_EXPIRY_DAYS} days"
+                        ),
                         border_style="green",
                         title="✅ Training Complete",
                     )
@@ -188,10 +204,12 @@ class CLI:
             else:
                 self.console.print(
                     Panel(
-                        f"[bold red]Training Not Completed[/bold red]\n\n"
-                        f"Final Score: {score:.1f}%\n"
-                        f"Required: {Config.PASS_THRESHOLD}%\n\n"
-                        f"Please retake the training to earn your certificate.",
+                        (
+                            f"[bold red]Training Not Completed[/bold red]\n\n"
+                            f"Final Score: {score:.1f}%\n"
+                            f"Required: {Config.PASS_THRESHOLD}%\n\n"
+                            f"Please retake the training to earn your certificate."
+                        ),
                         border_style="red",
                         title="❌ Below Passing Score",
                     )
@@ -241,11 +259,14 @@ class CLI:
             filename = self.compliance_dashboard.generate_enterprise_report(format_type)
             self.console.print(
                 Panel(
-                    f"[green]✅ Report generated successfully![/green]\n\n"
-                    f"📁 File: {filename}\n"
-                    f"📊 Format: {format_type.upper()}",
+                    (
+                        f"[green]✅ Report generated successfully![/green]\n\n"
+                        f"📁 File: {filename}\n"
+                        f"📊 Format: {format_type.upper()}"
+                    ),
                     border_style="green",
                 )
             )
         except Exception as e:
             self.console.print(f"[red]❌ Report generation failed: {str(e)}[/red]")
+
