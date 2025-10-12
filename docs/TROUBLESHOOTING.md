@@ -1,6 +1,3 @@
-Here is the complete GitHub-readable Markdown document, ready for copy-paste with your final sections included and properly closed:
-
-````markdown
 # HIPAA Training System V3.0 - Troubleshooting Guide
 
 Common issues and solutions for the HIPAA Training System.
