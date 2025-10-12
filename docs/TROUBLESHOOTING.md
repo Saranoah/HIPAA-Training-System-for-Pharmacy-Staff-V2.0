@@ -372,6 +372,44 @@ pytest tests/ -v --tb=long
 
 ---
 
-## 🚑 Emergency Recovery
+ ## 🚑 Emergency Recovery
 
+```bash
+mkdir emergency_backup
+cp -r data/ evidence/ logs/ emergency_backup/
+rm -rf hipaa_training/__pycache__ data/hipaa_training.db logs/*
+pip uninstall -y cryptography rich pytest
+pip install -r requirements.txt
+python main.py --setup-only
+cp emergency_backup/data/hipaa_training.db data/
+python scripts/health_check.py
 ```
+
+---
+
+## 📝 Known Issues & Preventive Measures
+
+* Evidence files >5MB rejected
+* No web interface (planned V4.0)
+* Email notifications not sent
+
+**Preventive Measures:**
+
+* Regular backups via cron
+* Monitor logs weekly
+* Test restores monthly
+* Keep updated: `git pull`, `pip install -r requirements.txt --upgrade`
+* Weekly health checks: `python scripts/health_check.py`
+
+---
+
+## 📚 Resources
+
+* [HIPAA Guidance](https://www.hhs.gov/hipaa)
+* [Python Docs](https://docs.python.org/3/)
+* [SQLite Docs](https://www.sqlite.org/docs.html)
+* [Cryptography Library](https://cryptography.io/)
+
+**Last Updated:** 2025-01-11  
+**Version:** 3.0
+
