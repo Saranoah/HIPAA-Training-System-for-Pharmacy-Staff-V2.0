@@ -3,6 +3,7 @@ import os
 from typing import Dict, List
 from .models import Config
 
+
 class ContentManager:
     """
     Manages lessons, quizzes, and checklist content for HIPAA training.
