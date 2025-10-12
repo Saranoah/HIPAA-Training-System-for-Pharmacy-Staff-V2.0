@@ -14,7 +14,7 @@ hipaa_training/
 ├── training_engine.py   # Training content delivery
 └── content_manager.py   # Content loading and validation
 
-
+ 
 ## 🔧 Core Modules
 
 ### `models.py`
