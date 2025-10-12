@@ -1,72 +1,80 @@
 [
   {
-    "category": "Administrative Safeguards",
-    "items": [
-      "Completed HIPAA Privacy and Security training",
-      "Reviewed organization's HIPAA policies and procedures",
-      "Signed employee confidentiality agreement",
-      "Designated HIPAA Privacy Officer is identified and trained",
-      "Incident response plan reviewed and understood"
-    ]
+    "text": "Privacy Rule training completed",
+    "category": "Training",
+    "validation_hint": "Verify completion certificate or training records"
   },
   {
-    "category": "Physical Safeguards",
-    "items": [
-      "Workstation screens are positioned to prevent unauthorized viewing",
-      "PHI is stored in locked cabinets or secure areas",
-      "Access to areas containing PHI is restricted to authorized personnel only",
-      "Devices storing ePHI are not left unattended",
-      "Paper records containing PHI are shredded or securely destroyed when no longer needed"
-    ]
+    "text": "Security Rule requirements reviewed",
+    "category": "Training",
+    "validation_hint": "Confirm understanding of administrative, physical, and technical safeguards"
   },
   {
-    "category": "Technical Safeguards",
-    "items": [
-      "Strong passwords and multi-factor authentication are enforced",
-      "PHI is encrypted during storage and transmission",
-      "Automatic screen locks are enabled on all devices",
-      "Audit logs are reviewed regularly for unauthorized access attempts",
-      "Antivirus and firewall protections are up to date"
-    ]
+    "text": "Understand breach notification timeline (60 days)",
+    "category": "Knowledge",
+    "validation_hint": "Can explain when and how to report breaches"
   },
   {
-    "category": "Privacy Rule Compliance",
-    "items": [
-      "Patients have been informed of their privacy rights via Notice of Privacy Practices (NPP)",
-      "Procedures are in place to handle patient requests for access or amendment of PHI",
-      "Only the minimum necessary PHI is used or disclosed",
-      "BAAs (Business Associate Agreements) are in place with all third-party vendors handling PHI",
-      "All disclosures of PHI are logged as required"
-    ]
+    "text": "Can identify unauthorized PHI access",
+    "category": "Knowledge",
+    "validation_hint": "Knows when to report security incidents"
   },
   {
-    "category": "Security Rule Compliance",
-    "items": [
-      "Risk assessment for ePHI systems completed within the past year",
-      "Data backups are encrypted and securely stored",
-      "Access control lists are regularly updated",
-      "Workforce members receive ongoing security reminders and updates",
-      "Security incidents are documented and investigated promptly"
-    ]
+    "text": "Minimum necessary standard understood",
+    "category": "Knowledge",
+    "validation_hint": "Only access PHI needed for specific job duties"
   },
   {
-    "category": "Breach Notification Procedures",
-    "items": [
-      "Staff understand how to recognize and report potential breaches",
-      "Incident reporting process is documented and accessible",
-      "Procedures exist to notify affected individuals within 60 days of breach discovery",
-      "Breach logs are reviewed and maintained",
-      "Communication templates for breach notifications are pre-approved by compliance"
-    ]
+    "text": "All 18 PHI identifiers known",
+    "category": "Knowledge",
+    "validation_hint": "Can list and recognize the 18 HIPAA identifiers"
   },
   {
-    "category": "Ongoing Compliance Monitoring",
-    "items": [
-      "Annual HIPAA refresher training completed by all staff",
-      "Random compliance audits conducted at least twice per year",
-      "New hires complete HIPAA training before system access is granted",
-      "All policy updates are communicated to employees promptly",
-      "Compliance documentation retained for at least six years"
+    "text": "Patient rights (7 types) understood",
+    "category": "Knowledge",
+    "validation_hint": "Right to access, amend, accounting of disclosures, restrictions, etc."
+  },
+  {
+    "text": "ePHI encrypted at rest",
+    "category": "Technical",
+    "validation_hint": "Verify encryption settings on all devices storing ePHI"
+  },
+  {
+    "text": "ePHI encrypted in transit",
+    "category": "Technical",
+    "validation_hint": "Use secure email, VPN, and encrypted file transfer"
+  },
+  {
+    "text": "Audit logs enabled and reviewed",
+    "category": "Technical",
+    "validation_hint": "Check system access logs monthly for anomalies"
+  },
+  {
+    "text": "Cross-cut shredders available for PHI disposal",
+    "category": "Technical",
+    "validation_hint": "Physical document destruction equipment in place"
+  },
+  {
+    "text": "Unique user logins for all staff members",
+    "category": "Technical",
+    "validation_hint": "No shared passwords or generic accounts"
+  },
+  {
+    "text": "Annual staff HIPAA training completed",
+    "category": "Compliance",
+    "validation_hint": "Document and upload training certificates or attendance records"
+  },
+  {
+    "text": "Business Associate Agreements (BAAs) signed with all vendors",
+    "category": "Compliance",
+    "validation_hint": "Verify contracts with IT providers, billing companies, consultants"
+  },
+  {
+    "text": "Notice of Privacy Practices (NPP) provided to patients",
+    "category": "Compliance",
+    "validation_hint": "Confirm patient acknowledgment forms on file"
+  }
+]
     ]
   }
 ]
